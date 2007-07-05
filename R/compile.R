@@ -28,15 +28,24 @@ cacher <- function(file, cachedir = ".cache") {
                        metadata = metadata)
         exprList <- parse(file, srcfile = NULL)
 
+        initForceEvalList(config)
+
         for(i in seq_along(exprList)) {
-                e <- exprList[i]
+                cat(i, " ")
+                expr <- exprList[i]
                 config$history <- exprList[seq_len(i - 1)]
-                runExpression(e, config)
+                runExpression(expr, config)
+
+                writeMetadata(expr, config)
         }
 }
-
-
 cc <- cacher
+
+################################################################################
+
+writeMetadata <- function(expr, config) {
+
+}
 
 isCached <- function(exprFile) {
         file.exists(exprFile)
@@ -136,10 +145,10 @@ checkNewSymbols <- function(e1, e2) {
 ## objects in 'global1' and 'global2' are never modified and therefore
 ## do not end up using extra memory.
 
-evalAndCache <- function(expr, exprFile) {
+evalAndCache <- function(expr, exprFile, config) {
         env <- new.env(parent = globalenv())
         before <- copyEnv(globalenv())
-        eval(expr, env)
+        eval(expr, env, globalenv())
         after <- copyEnv(globalenv())
 
         ## Functions like 'source' and 'set.seed' alter the global
@@ -150,9 +159,9 @@ evalAndCache <- function(expr, exprFile) {
         ## Get newly assigned object names
         keys <- ls(env, all.names = TRUE)
 
-        if(length(keys) == 0 && !checkForceEvalList(expr)) {
+        if(length(keys) == 0 && !checkForceEvalList(expr, config)) {
                 message("expression has side effect: ", hash(expr))
-                updateForceEvalList(expr)
+                updateForceEvalList(expr, config)
         }
         saveWithIndex(keys, exprFile, env)
         env
