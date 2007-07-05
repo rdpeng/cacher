@@ -22,13 +22,14 @@ library(digest)
 cacher <- function(file, cachedir = ".cache") {
         if(!file.exists(cachedir))
                 dir.create(cachedir)
-        if(!file.exists(metadata <- file.path(cachedir, ".exprMetaData")))
-                file.create(metadata)
+        metadata <- file.path(cachedir, ".exprMetaData")
+        file.create(metadata)
+        initForceEvalList(config)
+        
         config <- list(cachedir = cachedir,
                        metadata = metadata)
         exprList <- parse(file, srcfile = NULL)
 
-        initForceEvalList(config)
 
         for(i in seq_along(exprList)) {
                 cat(i, " ")
