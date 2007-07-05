@@ -63,15 +63,19 @@ runExpression <- function (expr, config) {
                 exprFile <- exprFileName(expr, config)
 
                 if(!isCached(exprFile)) {
-                        message("eval expr and cache")
+                        message("  eval expr and cache")
                         evalAndCache(expr, exprFile, config)
                 }
-                message("--loading expr from cache")
+                message("  --loading expr from cache")
                 cacheLazyLoad(exprFile, globalenv())
         }
         else {
-                message("force evaluating expression")
-                eval(expr, globalenv(), baseenv())
+                message("  force evaluating expression")
+                out <- withVisible({
+                        eval(expr, globalenv(), baseenv())
+                })
+                if(out$visible)
+                        print(out$value)
         }
 }
 
@@ -83,7 +87,7 @@ hashExpr <- function(expr, history) {
         obj <- list(expr, history)
         hash(obj)
 }
-
+        
 
 ################################################################################
 copy2env <- function(keys, fromEnv, toEnv) {
@@ -166,7 +170,7 @@ evalAndCache <- function(expr, exprFile, config) {
         keys <- ls(env, all.names = TRUE)
 
         if(length(keys) == 0 && !checkForceEvalList(expr, config)) {
-                message("expression has side effect: ", hash(expr))
+                message("  expression has side effect: ", hash(expr))
                 updateForceEvalList(expr, config)
         }
         saveWithIndex(keys, exprFile, env)
