@@ -158,7 +158,11 @@ checkNewSymbols <- function(e1, e2) {
 evalAndCache <- function(expr, exprFile, config) {
         env <- new.env(parent = globalenv())
         before <- copyEnv(globalenv())
-        eval(expr, env, globalenv())
+        out <- withVisible({
+                eval(expr, env, globalenv())
+        })
+        if(out$visible)
+                print(out$value)
         after <- copyEnv(globalenv())
 
         ## Functions like 'source' and 'set.seed' alter the global
