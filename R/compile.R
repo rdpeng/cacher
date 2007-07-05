@@ -45,7 +45,7 @@ cc <- cacher
 
 writeMetadata <- function(expr, config) {
         entry <- data.frame(exprID = hashExpr(expr, config$history),
-                            forceEval = as.integer(checkForceEvalList(expr)),
+                            forceEval = as.integer(checkForceEvalList(expr, config)),
                             time = Sys.time())
         write.dcf(entry, file = config$metadata, append = TRUE, width = 5000)
         invisible(entry)
