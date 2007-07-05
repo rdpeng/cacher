@@ -165,19 +165,19 @@ exprFileName <- function(expr, config) {
 ################################################################################
 ## Handling expressions with side effects
 
-sideEffectListFile <- function(config) {
+forceEvalListFile <- function(config) {
         file.path(config$cachedir, ".ForceEvalList")
 }
 
 updateForceEvalList <- function(expr, config) {
-        con <- file(sideEffectListFile(config), "a")
+        con <- file(forceEvalListFile(config), "a")
         on.exit(close(con))
         
         writeLines(hash(expr), con)
 }
 
 initForceEvalList <- function(config) {
-        file <- sideEffectListFile(config)
+        file <- forceEvalListFile(config)
 
         ## This is probably not necessary....
         if(!file.exists(file))
@@ -186,7 +186,7 @@ initForceEvalList <- function(config) {
 }
 
 checkForceEvalList <- function(expr, config) {
-        exprList <- readLines(sideEffectListFile(config))
+        exprList <- readLines(forceEvalListFile(config))
         hash(expr) %in% exprList
 }
 
