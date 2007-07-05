@@ -1,5 +1,5 @@
-######################################################################
-## Copyright (C) 2006, Roger D. Peng <rpeng@jhsph.edu>
+################################################################################
+## Copyright (C) 2007, Roger D. Peng <rpeng@jhsph.edu>
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -15,9 +15,62 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ## 02110-1301, USA
-#####################################################################
+################################################################################
 
-######################################################################
+library(digest)
+
+cacher <- function(file, cachedir = "cache") {
+        if(!file.exists(cachedir))
+                dir.create(cachedir)
+        if(!file.exists(metadata <- file.path(cachedir, ".exprMetaData")))
+                file.create(metadata)
+        config <- list(cachedir = cachedir,
+                       metadata = metadata)
+        exprList <- parse(file, srcfile = NULL)
+
+        for(i in seq_along(exprList)) {
+                e <- exprList[i]
+                config$history <- exprList[seq_len(i - 1)]
+                runExpression(e, config)
+        }
+}
+
+
+cc <- cacher
+
+isCached <- function(exprFile) {
+        file.exists(exprFile)
+}
+        
+runExpression <- function (expr, config) {
+        ## 'expr' is a single expression, so something like 'a <- 1'
+        if(!checkForceEvalList(expr)) {
+                exprFile <- exprFileName(expr, config)
+
+                if(!isCached(exprFile)) {
+                        message("eval expr and cache")
+                        evalAndCache(expr, exprFile)
+                }
+                message("loading expr from cache")
+                lazyLoad(exprFile, globalenv())
+        }
+        else {
+                message("evaluating expression")
+                eval(expr, globalenv(), baseenv())
+        }
+}
+
+hash <- function(object) {
+        digest(object, algo = "sha1")
+}
+
+hashExpr <- function(expr, history) {
+        obj <- list(expr, history)
+        hash(obj)
+}
+
+
+################################################################################
 copy2env <- function(keys, fromEnv, toEnv) {
         for(key in keys) {
                 assign(key, get(key, fromEnv, inherits = FALSE), toEnv)
@@ -83,58 +136,48 @@ checkNewSymbols <- function(e1, e2) {
 ## objects in 'global1' and 'global2' are never modified and therefore
 ## do not end up using extra memory.
 
-evalAndCache <- function(expr, exprFile, cache = TRUE) {
+evalAndCache <- function(expr, exprFile) {
         env <- new.env(parent = globalenv())
-        global1 <- copyEnv(globalenv())
-        
+        before <- copyEnv(globalenv())
         eval(expr, env)
-
-        global2 <- copyEnv(globalenv())
+        after <- copyEnv(globalenv())
 
         ## Functions like 'source' and 'set.seed' alter the global
         ## environment, so check after evaluation
-        new.global <- checkNewSymbols(global1, global2)
+        new.global <- checkNewSymbols(before, after)
         copy2env(new.global, globalenv(), env)
 
         ## Get newly assigned object names
         keys <- ls(env, all.names = TRUE)
 
         if(length(keys) == 0 && !checkForceEvalList(expr)) {
-                ## message("expression has side effect: ", digest(expr))
+                message("expression has side effect: ", hash(expr))
                 updateForceEvalList(expr)
         }
-        if(cache) 
-                saveWithIndex(keys, exprFile, env)
+        saveWithIndex(keys, exprFile, env)
         env
 }
 
-exprFileName <- function(cachedir, options, exprDigest) {
-        chunkdir <- makeChunkDirName(cachedir, options)
-        file.path(chunkdir, exprDigest)
-}
-
-makeChunkDirName <- function(cachedir, options) {
-        file.path(cachedir, paste(options$label, options$chunkDigest,
-                                  sep = "_"))
+exprFileName <- function(expr, config) {
+        file.path(config$cachedir, hashExpr(expr, config$history))
 }
 
 ################################################################################
 ## Handling expressions with side effects
 
-sideEffectListFile <- function() {
-        file.path(getCacheDir(), ".ForceEvalList")
+sideEffectListFile <- function(config) {
+        file.path(config$cachedir, ".ForceEvalList")
 }
 
-updateForceEvalList <- function(expr) {
-        exprDigest <- digest(expr)
-        con <- file(sideEffectListFile(), "a")
+updateForceEvalList <- function(expr, config) {
+        con <- file(sideEffectListFile(config), "a")
         on.exit(close(con))
         
-        writeLines(exprDigest, con)
+        writeLines(hash(expr), con)
 }
 
-initForceEvalList <- function() {
-        file <- sideEffectListFile()
+initForceEvalList <- function(config) {
+        file <- sideEffectListFile(config)
 
         ## This is probably not necessary....
         if(!file.exists(file))
@@ -142,68 +185,12 @@ initForceEvalList <- function() {
         invisible(file)
 }
 
-checkForceEvalList <- function(expr) {
-        exprDigest <- digest(expr)
-        exprList <- readLines(sideEffectListFile())
-        exprDigest %in% exprList
+checkForceEvalList <- function(expr, config) {
+        exprList <- readLines(sideEffectListFile(config))
+        hash(expr) %in% exprList
 }
 
 ################################################################################
-## The major modification is here: Rather than evaluate expressions
-## and leave them in the global environment, we evaluate them in a
-## local environment (that has globalenv() as the parent) and then
-## store the assignments in a database.  If an expression does not
-## give rise to new R objects, then nothing is saved.
-
-cacheSweaveEvalWithOpt <- function (expr, options) {
-        ## 'expr' is a single expression, so something like 'a <- 1'
-        res <- NULL
-        
-        if(!options$eval)
-                return(res)
-        if(options$cache && !checkForceEvalList(expr)) {
-                cachedir <- getCacheDir()
-                chunkdir <- makeChunkDirName(cachedir, options)
-
-                if(!file.exists(chunkdir))
-                        dir.create(chunkdir, recursive = TRUE)
-                exprDigest <- digest(expr, algo = "md5")
-                exprFile <- exprFileName(cachedir, options, exprDigest)
-
-                ## If the current expression is not cached, then
-                ## evaluate the expression and dump the resulting
-                ## objects to the database.
-                res <- if(!file.exists(exprFile)) {
-                        try({
-                                withVisible({
-                                        evalAndCache(expr, exprFile)
-                                })
-                        }, silent = TRUE)
-                }
-                else  
-                        NULL  ## load from cache
-
-                ## (If there was an error then just return the
-                ## condition object and let Sweave deal with it.)
-                if(inherits(res, "try-error"))
-                        return(res)
-                
-                lazyLoad(exprFile, globalenv())
-        }
-        else {
-                res <- try({
-                        withVisible({
-                                eval(expr, globalenv(), baseenv())
-                        })
-                }, silent = TRUE)
-                if(inherits(res, "try-error"))
-                        return(res)
-                ## copy2env(ls(env, all.names = TRUE), env, globalenv())
-        }
-        if(!is.null(res) && (options$print | (options$term & res$visible)))
-                print(res$value)
-        res
-}
 
 
 makeMapFileName <- function(Rnwfile) {
@@ -218,7 +205,7 @@ makeMapFileName <- function(Rnwfile) {
 writeChunkMetadata <- function(object, chunk, options) {
         chunkprefix <- utils::RweaveChunkPrefix(options)
         chunkexps <- parse(text = chunk)
-        chunkDigest <- digest(chunkexps, algo = "md5")
+        chunkDigest <- hash(chunkexps)
         options$chunkDigest <- chunkDigest
         
         ## If there's a data map file then write the chunk name and the
