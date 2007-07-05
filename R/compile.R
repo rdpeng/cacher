@@ -19,7 +19,7 @@
 
 library(digest)
 
-cacher <- function(file, cachedir = "cache") {
+cacher <- function(file, cachedir = ".cache") {
         if(!file.exists(cachedir))
                 dir.create(cachedir)
         if(!file.exists(metadata <- file.path(cachedir, ".exprMetaData")))
