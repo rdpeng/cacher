@@ -38,7 +38,7 @@ isEmptyIndex <- function(idx) {
         isTRUE(length(idx) == 0)
 }
 
-lazyLoad <- function(file, envir = parent.frame()) {
+cacheLazyLoad <- function(file, envir = parent.frame()) {
         dbcon <- file(file, "rb")
         tryCatch({
                 index <- unserialize(dbcon)

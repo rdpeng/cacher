@@ -44,18 +44,18 @@ isCached <- function(exprFile) {
         
 runExpression <- function (expr, config) {
         ## 'expr' is a single expression, so something like 'a <- 1'
-        if(!checkForceEvalList(expr)) {
+        if(!checkForceEvalList(expr, config)) {
                 exprFile <- exprFileName(expr, config)
 
                 if(!isCached(exprFile)) {
                         message("eval expr and cache")
-                        evalAndCache(expr, exprFile)
+                        evalAndCache(expr, exprFile, config)
                 }
-                message("loading expr from cache")
-                lazyLoad(exprFile, globalenv())
+                message("--loading expr from cache")
+                cacheLazyLoad(exprFile, globalenv())
         }
         else {
-                message("evaluating expression")
+                message("force evaluating expression")
                 eval(expr, globalenv(), baseenv())
         }
 }
