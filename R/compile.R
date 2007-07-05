@@ -31,20 +31,22 @@ cacher <- function(file, cachedir = ".cache") {
         exprList <- parse(file, srcfile = NULL)
 
         for(i in seq_along(exprList)) {
-                cat(i, " ")
                 expr <- exprList[i]
+                message(sprintf("%d:[%s] ", i, deparse(expr[[1]], width = 30)[1]))
                 config$history <- exprList[seq_len(i - 1)]
                 runExpression(expr, config)
 
                 writeMetadata(expr, config)
         }
 }
+
 cc <- cacher
 
 ################################################################################
 
 writeMetadata <- function(expr, config) {
         entry <- data.frame(exprID = hashExpr(expr, config$history),
+                            exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr, config)),
                             time = Sys.time())
         write.dcf(entry, file = config$metadata, append = TRUE, width = 5000)
