@@ -1,0 +1,11 @@
+Package: compileCache
+Title: Tools for caching computations
+Version: 0.1
+Date: 2007-07-05
+Depends: R (>= 2.5.0)
+Imports: utils, digest
+LazyLoad: yes
+Author: Roger D. Peng <rpeng@jhsph.edu>
+Maintainer: Roger D. Peng <rpeng@jhsph.edu>
+Description: Tools for caching computations and storing them in key-value databases
+License: GNU GPL (version 2 or later)
