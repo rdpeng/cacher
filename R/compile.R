@@ -25,8 +25,12 @@ cacher <- function(file, cachedir = ".cache") {
         metadata <- file.path(cachedir, ".exprMetaData")
         file.create(metadata)
         
+        fileList <- suppressWarnings({
+                dir(recursive = TRUE, full.names = TRUE)
+        })
         config <- list(cachedir = cachedir,
-                       metadata = metadata)
+                       metadata = metadata,
+                       fileList = fileList)
         initForceEvalList(config)
         exprList <- parse(file, srcfile = NULL)
 
@@ -34,8 +38,16 @@ cacher <- function(file, cachedir = ".cache") {
                 expr <- exprList[i]
                 message(sprintf("%d:[%s] ", i, deparse(expr[[1]], width = 30)[1]))
                 config$history <- exprList[seq_len(i - 1)]
+
                 runExpression(expr, config)
 
+                newfiles <- checkNewFiles(config)
+                
+                if(length(newfiles) > 0) {
+                        message("  expression created files ",
+                                paste(newfiles, collapse = ", "))
+                        config$fileList <- c(config$fileList, newfiles)
+                }
                 writeMetadata(expr, config)
         }
 }
@@ -66,7 +78,7 @@ runExpression <- function (expr, config) {
                         message("  eval expr and cache")
                         evalAndCache(expr, exprFile, config)
                 }
-                message("  --loading expr from cache")
+                message("  -- loading expr from cache")
                 cacheLazyLoad(exprFile, globalenv())
         }
         else {
@@ -144,6 +156,13 @@ checkNewSymbols <- function(e1, e2) {
 
         use <- isNewOrModified(allsym, e1, e2)
         allsym[use]
+}
+
+checkNewFiles <- function(config) {
+        current <- suppressWarnings({
+                dir(recursive = TRUE, full.names = TRUE)
+        })
+        setdiff(current, config$fileList)
 }
 
 ## Take an expression, evaluate it in a local environment and dump the
