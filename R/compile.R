@@ -24,12 +24,11 @@ cacher <- function(file, cachedir = ".cache") {
                 dir.create(cachedir)
         metadata <- file.path(cachedir, ".exprMetaData")
         file.create(metadata)
-        initForceEvalList(config)
         
         config <- list(cachedir = cachedir,
                        metadata = metadata)
+        initForceEvalList(config)
         exprList <- parse(file, srcfile = NULL)
-
 
         for(i in seq_along(exprList)) {
                 cat(i, " ")
