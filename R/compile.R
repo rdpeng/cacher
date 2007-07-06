@@ -51,7 +51,7 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = "cacher.log") {
         fileList <- suppressWarnings({
                 dir(recursive = TRUE, full.names = TRUE)
         })
-        ## dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
+        dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
 
         oldPlotHook <- getHook("plot.new")
         oldGridHook <- getHook("grid.newpage")
