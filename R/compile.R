@@ -19,17 +19,29 @@
 
 library(digest)
 
+logMessage <- function(...) {
+        args <- list(...)
+        msg <- paste(paste(args, collapse = ""), "\n", sep = "")
+        cat(msg, file = .config$logfile, append = TRUE)
+}
+
 cacherPlotHook <- function() {
-        message("  'plot.new' called; need to force evaluation")
-        .config$plot.new <- TRUE
+        logMessage("  'plot.new' called; need to force evaluation")
+        .config$new.plot <- TRUE
+}
+
+cacherGridHook <- function() {
+        logMessage("  'grid.newpage' called; need to force evaluation")
+        .config$new.plot <- TRUE
 }
 
 .config <- new.env(parent = emptyenv())
 
-cacher <- cc <- function(file, cachedir = ".cache") {
+cacher <- cc <- function(file, cachedir = ".cache", logfile = "cacher.log") {
         dir.create(cachedir, showWarnings = FALSE)
         metadata <- file.path(cachedir, ".exprMetaData")
         file.create(metadata)
+        file.create(logfile)
         
         fileList <- suppressWarnings({
                 dir(recursive = TRUE, full.names = TRUE)
@@ -39,21 +51,26 @@ cacher <- cc <- function(file, cachedir = ".cache") {
         oldPlotHook <- getHook("plot.new")
         on.exit(setHook("plot.new", oldPlotHook, "replace"))
         setHook("plot.new", cacherPlotHook, "append")
-        
+        oldGridHook <- getHook("grid.newpage")
+        on.exit(setHook("grid.newpage", oldGridHook, "replace"), add = TRUE)
+        setHook("grid.newpage", cacherGridHook, "append")
+
         .config$cachedir <- cachedir
         .config$metadata <- metadata
         .config$fileList <- fileList
-        
+        .config$new.plot <- FALSE
+        .config$logfile <- logfile
+
         initForceEvalList()
         exprList <- parse(file, srcfile = NULL)
 
         for(i in seq_along(exprList)) {
                 expr <- exprList[i]
-                message(sprintf("%d:[%s] ", i, deparse(expr[[1]], width = 30)[1]))
+                logMessage(sprintf("%d:[%s] ", i,
+                                   deparse(expr[[1]], width = 30)[1]))
                 .config$history <- exprList[seq_len(i - 1)]
 
                 runExpression(expr)
-                
                 writeMetadata(expr)
         }
 }
@@ -76,7 +93,7 @@ isCached <- function(exprFile) {
 runExpression <- function (expr) {
         ## 'expr' is a single expression, so something like 'a <- 1'
         if(checkForceEvalList(expr)) {
-                message("  force evaluating expression")
+                logMessage("  force evaluating expression")
                 out <- withVisible({
                         eval(expr, globalenv(), baseenv())
                 })
@@ -87,26 +104,27 @@ runExpression <- function (expr) {
         exprFile <- exprFileName(expr)
         
         if(!isCached(exprFile)) {
-                message("  eval expr and cache")
+                logMessage("  eval expr and cache")
                 keys <- evalAndCache(expr, exprFile)
                 
                 if(length(newfiles <- checkNewFiles()) > 0) {
-                        message("  expression created files ",
-                                paste(newfiles, collapse = ", "))
+                        logMessage("  expression created files ",
+                                   paste(newfiles, collapse = ", "))
                         .config$fileList <- c(.config$fileList, newfiles)
                 }
-                if(newplot <- .config$plot.new) 
-                        .config$plot.new <- FALSE
+                if(newplot <- .config$new.plot) 
+                        .config$new.plot <- FALSE
 
                 forceEval <- (length(keys) == 0 || length(newfiles) > 0
                               || newplot)
                 
                 if(forceEval && !checkForceEvalList(expr)) {
-                        message("  expression has side effect: ", hash(expr))
+                        logMessage("  expression has side effect: ",
+                                   hash(expr))
                         updateForceEvalList(expr)
                 }
         }
-        message("  -- loading expr from cache")
+        logMessage("  -- loading expr from cache")
         cacheLazyLoad(exprFile, globalenv())
 }
 
