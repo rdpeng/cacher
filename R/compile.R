@@ -66,7 +66,7 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = "cacher.log") {
 
         for(i in seq_along(exprList)) {
                 expr <- exprList[i]
-                logMessage(sprintf("%d:[%s] ", i,
+                logMessage(sprintf("%d: %s", i,
                                    deparse(expr[[1]], width = 30)[1]))
                 .config$history <- exprList[seq_len(i - 1)]
 
