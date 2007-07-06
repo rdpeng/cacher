@@ -22,7 +22,11 @@ library(digest)
 logMessage <- function(...) {
         args <- list(...)
         msg <- paste(paste(args, collapse = ""), "\n", sep = "")
-        cat(msg, file = .config$logfile, append = TRUE)
+        out <- if(is.null(.config$logfile))
+                stderr()
+        else
+                .config$logfile
+        cat(msg, file = out, append = TRUE)
 }
 
 cacherPlotHook <- function() {
@@ -41,19 +45,22 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = "cacher.log") {
         dir.create(cachedir, showWarnings = FALSE)
         metadata <- file.path(cachedir, ".exprMetaData")
         file.create(metadata)
-        file.create(logfile)
-        
+
+        if(!is.null(logfile))
+                file.create(logfile)
         fileList <- suppressWarnings({
                 dir(recursive = TRUE, full.names = TRUE)
         })
         ## dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
 
         oldPlotHook <- getHook("plot.new")
-        on.exit(setHook("plot.new", oldPlotHook, "replace"))
-        setHook("plot.new", cacherPlotHook, "append")
         oldGridHook <- getHook("grid.newpage")
-        on.exit(setHook("grid.newpage", oldGridHook, "replace"), add = TRUE)
+        setHook("plot.new", cacherPlotHook, "append")
         setHook("grid.newpage", cacherGridHook, "append")
+        on.exit({
+                setHook("plot.new", oldPlotHook, "replace")
+                setHook("grid.newpage", oldGridHook, "replace")
+        })
 
         .config$cachedir <- cachedir
         .config$metadata <- metadata
