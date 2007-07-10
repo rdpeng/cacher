@@ -41,16 +41,19 @@ cacherGridHook <- function() {
 
 .config <- new.env(parent = emptyenv())
 
-cacher <- cc <- function(file, cachedir = ".cache", logfile = "cacher.log") {
+################################################################################
+
+cacher <- cc <- function(file, cachedir = ".cache",
+                         logfile = paste(file, "log", sep = ".")) {
+        exprList <- parse(file, srcfile = NULL)
+
         dir.create(cachedir, showWarnings = FALSE)
         metadata <- file.path(cachedir, ".exprMetaData")
         file.create(metadata)
 
         if(!is.null(logfile))
                 file.create(logfile)
-        fileList <- suppressWarnings({
-                dir(recursive = TRUE, full.names = TRUE)
-        })
+        fileList <- suppressWarnings(dir(recursive = TRUE, full.names = TRUE))
         dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
 
         oldPlotHook <- getHook("plot.new")
@@ -61,7 +64,6 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = "cacher.log") {
                 setHook("plot.new", oldPlotHook, "replace")
                 setHook("grid.newpage", oldGridHook, "replace")
         })
-
         .config$cachedir <- cachedir
         .config$metadata <- metadata
         .config$fileList <- fileList
@@ -69,12 +71,11 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = "cacher.log") {
         .config$logfile <- logfile
 
         initForceEvalList()
-        exprList <- parse(file, srcfile = NULL)
 
         for(i in seq_along(exprList)) {
                 expr <- exprList[i]
-                logMessage(sprintf("%d: %s", i,
-                                   deparse(expr[[1]], width = 30)[1]))
+                msg <- sprintf("%d: %s", i, deparse(expr[[1]], width=30)[1])
+                logMessage(msg)
                 .config$history <- exprList[seq_len(i - 1)]
 
                 runExpression(expr)
@@ -126,8 +127,7 @@ runExpression <- function (expr) {
                               || newplot)
                 
                 if(forceEval && !checkForceEvalList(expr)) {
-                        logMessage("  expression has side effect: ",
-                                   hash(expr))
+                        logMessage("  expression has side effect: ", hash(expr))
                         updateForceEvalList(expr)
                 }
         }
@@ -146,6 +146,7 @@ hashExpr <- function(expr, history) {
         
 
 ################################################################################
+
 copy2env <- function(keys, fromEnv, toEnv) {
         for(key in keys) {
                 assign(key, get(key, fromEnv, inherits = FALSE), toEnv)
@@ -216,7 +217,8 @@ checkNewFiles <- function() {
 
 ## I *think* the 'copyEnv' stuff is okay w.r.t efficiency because the
 ## objects in 'global1' and 'global2' are never modified and therefore
-## do not end up using extra memory.
+## do not end up using extra memory.  I don't think the copyEnv stuff
+## works with promises.
 
 evalAndCache <- function(expr, exprFile) {
         env <- new.env(parent = globalenv())
