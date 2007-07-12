@@ -15,7 +15,7 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 ## 02110-1301, USA
-################################################################################
+###############################################################################
 
 library(digest)
 
@@ -41,20 +41,29 @@ cacherGridHook <- function() {
 
 .config <- new.env(parent = emptyenv())
 
+getFileList <- function() {
+        fileList <- suppressWarnings({
+                n <- dir(recursive = TRUE, full.names = TRUE, all.files = TRUE)
+                normalizePath(n)
+        })
+        cachedir <- normalizePath(.config$cachedir)
+        exclude <- grep(cachedir, fileList, fixed = TRUE)
+        fileList[-exclude]
+}
+
 ################################################################################
 
 cacher <- cc <- function(file, cachedir = ".cache",
                          logfile = paste(file, "log", sep = ".")) {
         exprList <- parse(file, srcfile = NULL)
-
+        
         dir.create(cachedir, showWarnings = FALSE)
         metadata <- file.path(cachedir, ".exprMetaData")
         file.create(metadata)
-
+        dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
+        
         if(!is.null(logfile))
                 file.create(logfile)
-        fileList <- suppressWarnings(dir(recursive = TRUE, full.names = TRUE))
-        dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
 
         oldPlotHook <- getHook("plot.new")
         oldGridHook <- getHook("grid.newpage")
@@ -66,9 +75,9 @@ cacher <- cc <- function(file, cachedir = ".cache",
         })
         .config$cachedir <- cachedir
         .config$metadata <- metadata
-        .config$fileList <- fileList
         .config$new.plot <- FALSE
         .config$logfile <- logfile
+        .config$fileList <- getFileList()
 
         initForceEvalList()
 
@@ -98,10 +107,29 @@ isCached <- function(exprFile) {
         file.exists(exprFile)
 }
         
+checkNewFiles <- function() {
+        current <- getFileList()
+        newfiles <- setdiff(current, .config$fileList)
+        files.new <- length(newfiles) > 0
+
+        if(files.new) {
+                logMessage("  expression created file(s) ",
+                           paste(newfiles, collapse = ", "))
+                .config$fileList <- c(.config$fileList, newfiles)
+        }
+        files.new
+}
+
+checkNewPlot <- function() {
+        if(newplot <- .config$new.plot) 
+                .config$new.plot <- FALSE
+        newplot
+}
+
 runExpression <- function (expr) {
         ## 'expr' is a single expression, so something like 'a <- 1'
         if(checkForceEvalList(expr)) {
-                logMessage("  force evaluating expression")
+                logMessage("  force expression evaluation")
                 out <- withVisible({
                         eval(expr, globalenv(), baseenv())
                 })
@@ -115,16 +143,10 @@ runExpression <- function (expr) {
                 logMessage("  eval expr and cache")
                 keys <- evalAndCache(expr, exprFile)
                 
-                if(length(newfiles <- checkNewFiles()) > 0) {
-                        logMessage("  expression created files ",
-                                   paste(newfiles, collapse = ", "))
-                        .config$fileList <- c(.config$fileList, newfiles)
-                }
-                if(newplot <- .config$new.plot) 
-                        .config$new.plot <- FALSE
+                newfiles <- checkNewFiles()
+                newplot <- checkNewPlot()
 
-                forceEval <- (length(keys) == 0 || length(newfiles) > 0
-                              || newplot)
+                forceEval <- (length(keys) == 0 || newfiles || newplot)
                 
                 if(forceEval && !checkForceEvalList(expr)) {
                         logMessage("  expression has side effect: ", hash(expr))
@@ -201,13 +223,6 @@ checkNewSymbols <- function(e1, e2) {
 
         use <- isNewOrModified(allsym, e1, e2)
         allsym[use]
-}
-
-checkNewFiles <- function() {
-        current <- suppressWarnings({
-                dir(recursive = TRUE, full.names = TRUE)
-        })
-        setdiff(current, .config$fileList)
 }
 
 ## Take an expression, evaluate it in a local environment and dump the
