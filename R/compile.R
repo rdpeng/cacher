@@ -54,7 +54,8 @@ getFileList <- function() {
 ################################################################################
 
 cacher <- cc <- function(file, cachedir = ".cache",
-                         logfile = paste(file, "log", sep = ".")) {
+                         logfile = paste(file, "log", sep = "."),
+                         window.size = Inf) {
         exprList <- parse(file, srcfile = NULL)
         
         dir.create(cachedir, showWarnings = FALSE)
@@ -77,6 +78,7 @@ cacher <- cc <- function(file, cachedir = ".cache",
         .config$metadata <- metadata
         .config$new.plot <- FALSE
         .config$logfile <- logfile
+        .config$file <- file
         .config$fileList <- getFileList()
 
         initForceEvalList()
@@ -85,7 +87,8 @@ cacher <- cc <- function(file, cachedir = ".cache",
                 expr <- exprList[i]
                 msg <- sprintf("%d: %s", i, deparse(expr[[1]], width=30)[1])
                 logMessage(msg)
-                .config$history <- exprList[seq_len(i - 1)]
+                window.idx <- seq.int(max(0, i - window.size), i - 1)
+                .config$history <- exprList[window.idx]
 
                 runExpression(expr)
                 writeMetadata(expr)
@@ -95,7 +98,8 @@ cacher <- cc <- function(file, cachedir = ".cache",
 ################################################################################
 
 writeMetadata <- function(expr) {
-        entry <- data.frame(exprID = hashExpr(expr, .config$history),
+        entry <- data.frame(file = .config$file,
+                            exprID = hashExpr(expr, .config$history),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)),
                             time = Sys.time())
@@ -155,6 +159,10 @@ runExpression <- function(expr) {
         }
         logMessage("  -- loading expr from cache")
         cacheLazyLoad(exprFile, globalenv())
+}
+
+exprFileName <- function(expr) {
+        file.path(.config$cachedir, hashExpr(expr, .config$history))
 }
 
 hash <- function(object) {
@@ -255,10 +263,6 @@ evalAndCache <- function(expr, exprFile) {
 
         saveWithIndex(keys, exprFile, env)
         keys
-}
-
-exprFileName <- function(expr) {
-        file.path(.config$cachedir, hashExpr(expr, .config$history))
 }
 
 ################################################################################
