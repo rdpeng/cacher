@@ -106,7 +106,10 @@ cacher <- cc <- function(file, cachedir = ".cache",
 ################################################################################
 
 writeMetadata <- function(expr) {
-        entry <- data.frame(file = .config$file,
+        entry <- data.frame(codefiele = .config$file,
+                            expr = deparse(expr[[1]], width = 30)[1],
+                            objects = paste(.config$new.objects, collapse = ";"),
+                            files = paste(.config$new.files, collapse = ";"),
                             exprID = hashExpr(expr, .config$history),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)),
@@ -118,7 +121,7 @@ writeMetadata <- function(expr) {
 isCached <- function(exprFile) {
         file.exists(exprFile)
 }
-        
+
 checkNewFiles <- function() {
         current <- getFileList()
         newfiles <- setdiff(current, .config$fileList)
@@ -128,7 +131,10 @@ checkNewFiles <- function() {
                 logMessage("  expression created file(s) ",
                            paste(newfiles, collapse = ", "))
                 .config$fileList <- c(.config$fileList, newfiles)
+                .config$new.files <- newfiles
         }
+        else
+                .config$new.files <- ""
         files.new
 }
 
@@ -142,6 +148,8 @@ runExpression <- function(expr) {
         ## 'expr' is a single expression, so something like 'a <- 1'
         if(checkForceEvalList(expr)) {
                 logMessage("  force expression evaluation")
+                .config$new.objects <- ""
+                
                 out <- withVisible({
                         eval(expr, globalenv(), baseenv())
                 })
@@ -158,7 +166,7 @@ runExpression <- function(expr) {
                 newfiles <- checkNewFiles()
                 newplot <- checkNewPlot()
 
-                forceEval <- (length(keys) == 0 || newfiles || newplot)
+                forceEval <- (length(keys) == 0 || newplot || newfiles)
                 
                 if(forceEval && !checkForceEvalList(expr)) {
                         logMessage("  expression has side effect: ", hash(expr))
@@ -166,7 +174,9 @@ runExpression <- function(expr) {
                 }
         }
         logMessage("  -- loading expr from cache")
-        cacheLazyLoad(exprFile, globalenv())
+        objects <- cacheLazyLoad(exprFile, globalenv())
+        .config$new.objects <- objects
+        invisible(objects)
 }
 
 exprFileName <- function(expr) {
