@@ -51,6 +51,18 @@ getFileList <- function() {
         fileList[-exclude]
 }
 
+setHookFunctions <- function() {
+        .config$oldPlotHook <- getHook("plot.new")
+        .config$oldGridHook <- getHook("grid.newpage")
+        setHook("plot.new", cacherPlotHook, "append")
+        setHook("grid.newpage", cacherGridHook, "append")
+}
+
+unsetHookFunctions <- function() {
+        setHook("plot.new", .config$oldPlotHook, "replace")
+        setHook("grid.newpage", .config$oldGridHook, "replace")
+}
+
 ################################################################################
 
 cacher <- cc <- function(file, cachedir = ".cache",
@@ -66,19 +78,15 @@ cacher <- cc <- function(file, cachedir = ".cache",
         if(!is.null(logfile))
                 file.create(logfile)
 
-        oldPlotHook <- getHook("plot.new")
-        oldGridHook <- getHook("grid.newpage")
-        setHook("plot.new", cacherPlotHook, "append")
-        setHook("grid.newpage", cacherGridHook, "append")
-        on.exit({
-                setHook("plot.new", oldPlotHook, "replace")
-                setHook("grid.newpage", oldGridHook, "replace")
-        })
+        setHookFunctions()
+        on.exit(unsetHookFunctions())
+
         .config$cachedir <- cachedir
         .config$metadata <- metadata
         .config$new.plot <- FALSE
         .config$logfile <- logfile
         .config$file <- file
+        .config$filedir <- file.path(cachedir, "files")
         .config$fileList <- getFileList()
 
         initForceEvalList()
