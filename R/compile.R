@@ -126,7 +126,7 @@ checkNewPlot <- function() {
         newplot
 }
 
-runExpression <- function (expr) {
+runExpression <- function(expr) {
         ## 'expr' is a single expression, so something like 'a <- 1'
         if(checkForceEvalList(expr)) {
                 logMessage("  force expression evaluation")
