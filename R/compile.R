@@ -106,7 +106,7 @@ cacher <- cc <- function(file, cachedir = ".cache",
 ################################################################################
 
 writeMetadata <- function(expr) {
-        entry <- data.frame(codefiele = .config$file,
+        entry <- data.frame(codefile = .config$file,
                             expr = deparse(expr[[1]], width = 30)[1],
                             objects = paste(.config$new.objects, collapse = ";"),
                             files = paste(.config$new.files, collapse = ";"),
