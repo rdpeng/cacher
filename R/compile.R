@@ -329,15 +329,4 @@ checkForceEvalList <- function(expr) {
         hash(expr) %in% exprList
 }
 
-################################################################################
-
-
-makeMapFileName <- function(Rnwfile) {
-        mapfile <- sub("\\.Rnw$", "\\.map", Rnwfile)
-
-        ## Don't clobber
-        if(identical(mapfile, Rnwfile))
-                mapfile <- paste(Rnwfile, "map", sep = ".")
-        mapfile
-}
 
