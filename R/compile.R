@@ -120,7 +120,7 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = NA,
 writeMetadata <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
         
-        entry <- data.frame(codefile = getConfig("file"),
+        entry <- data.frame(srcfile = getConfig("file"),
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
                             files = paste(getConfig("new.files"), collapse = ";"),
