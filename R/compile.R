@@ -74,16 +74,16 @@ getConfig <- function(name) {
 
 ################################################################################
 
-cacher <- cc <- function(file, cachedir = ".cache", logfile = NULL,
+cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL,
                          window.size = Inf) {
-        exprList <- parse(file, srcfile = NULL)
+        exprList <- parse(srcfile, srcfile = NULL)
         
         dir.create(cachedir, showWarnings = FALSE)
-        metadata <- file.path(cachedir, paste(file, "meta", sep = "."))
+        metadata <- file.path(cachedir, paste(srcfile, "meta", sep = "."))
         file.create(metadata)
         
         if(is.null(logfile)) {
-                logfile <- file.path(cachedir, paste(file,"log",sep="."))
+                logfile <- file.path(cachedir, paste(srcfile,"log",sep="."))
                 file.create(logfile)
         }
         if(is.na(logfile)) 
@@ -97,7 +97,7 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = NULL,
         setConfig("metadata", metadata)
         setConfig("new.plot", FALSE)
         setConfig("logfile", logfile)
-        setConfig("file", file)
+        setConfig("srcfile", srcfile)
         setConfig("fileList", getFileList())
 
         initForceEvalList()
@@ -116,7 +116,7 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = NULL,
                 runExpression(expr)
                 writeMetadata(expr)
         }
-        setConfig("srcfile", file)
+        setConfig("srcfile", srcfile)
 }
 
 ################################################################################
@@ -124,7 +124,7 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = NULL,
 writeMetadata <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
         
-        entry <- data.frame(srcfile = getConfig("file"),
+        entry <- data.frame(srcfile = getConfig("srcfile"),
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
                             files = paste(getConfig("new.files"), collapse = ";"),
