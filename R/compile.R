@@ -74,7 +74,7 @@ getConfig <- function(name) {
 
 ################################################################################
 
-cacher <- cc <- function(file, cachedir = ".cache", logfile = NA,
+cacher <- cc <- function(file, cachedir = ".cache", logfile = NULL,
                          window.size = Inf) {
         exprList <- parse(file, srcfile = NULL)
         
@@ -82,11 +82,11 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = NA,
         metadata <- file.path(cachedir, paste(file, "meta", sep = "."))
         file.create(metadata)
         
-        if(is.na(logfile)) {
+        if(is.null(logfile)) {
                 logfile <- file.path(cachedir, paste(file,"log",sep="."))
                 file.create(logfile)
         }
-        else if(is.null(logfile))
+        if(is.na(logfile)) 
                 logfile <- stderr()
         else
                 file.create(logfile)
