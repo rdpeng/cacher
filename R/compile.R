@@ -63,6 +63,18 @@ unsetHookFunctions <- function() {
         setHook("grid.newpage", .config$oldGridHook, "replace")
 }
 
+setConfig <- function(name, value) {
+        assign(name, value, .config, inherits = FALSE)
+}
+
+getConfig <- function(name) {
+        tryCatch({
+                get(name, .config, inherits = FALSE)
+        }, error = function(e) {
+                NULL
+        })
+}
+
 ################################################################################
 
 cacher <- cc <- function(file, cachedir = ".cache",
@@ -106,8 +118,10 @@ cacher <- cc <- function(file, cachedir = ".cache",
 ################################################################################
 
 writeMetadata <- function(expr) {
+        exprWidth <- getConfig("exprDeparseWidth")
+        
         entry <- data.frame(codefile = .config$file,
-                            expr = deparse(expr[[1]], width = 30)[1],
+                            expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(.config$new.objects, collapse = ";"),
                             files = paste(.config$new.files, collapse = ";"),
                             exprID = hashExpr(expr, .config$history),
