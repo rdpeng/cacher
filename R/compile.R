@@ -83,7 +83,7 @@ cacher <- cc <- function(file, cachedir = ".cache",
         exprList <- parse(file, srcfile = NULL)
         
         dir.create(cachedir, showWarnings = FALSE)
-        metadata <- file.path(cachedir, ".exprMetaData")
+        metadata <- file.path(cachedir, ".metadata")
         file.create(metadata)
         dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
         
