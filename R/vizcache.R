@@ -1,9 +1,9 @@
 ################################################################################
 ## Tools for visualizing the cache
 
-code <- function(num = NULL, cachedir = ".cache") {
-        srcfile <- getConfig("srcfile")
-
+code <- function(num = NULL, srcfile, cachedir = ".cache") {
+        if(missing(srcfile))
+                srcfile <- getConfig("srcfile")
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
         meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep=".")))
