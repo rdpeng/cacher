@@ -22,45 +22,43 @@ library(digest)
 logMessage <- function(...) {
         args <- list(...)
         msg <- paste(paste(args, collapse = ""), "\n", sep = "")
-        out <- if(is.null(.config$logfile))
+        out <- if(is.null(getConfig("logfile")))
                 stderr()
         else
-                .config$logfile
+                getConfig("logfile")
         cat(msg, file = out, append = TRUE)
 }
 
 cacherPlotHook <- function() {
         logMessage("  'plot.new' called; need to force evaluation")
-        .config$new.plot <- TRUE
+        setConfig("new.plot", TRUE)
 }
 
 cacherGridHook <- function() {
         logMessage("  'grid.newpage' called; need to force evaluation")
-        .config$new.plot <- TRUE
+        setConfig("new.plot", TRUE)
 }
-
-.config <- new.env(parent = emptyenv())
 
 getFileList <- function() {
         fileList <- suppressWarnings({
                 n <- dir(recursive = TRUE, full.names = TRUE, all.files = TRUE)
                 normalizePath(n)
         })
-        cachedir <- normalizePath(.config$cachedir)
+        cachedir <- normalizePath(getConfig("cachedir"))
         exclude <- grep(cachedir, fileList, fixed = TRUE)
         fileList[-exclude]
 }
 
 setHookFunctions <- function() {
-        .config$oldPlotHook <- getHook("plot.new")
-        .config$oldGridHook <- getHook("grid.newpage")
+        setConfig("oldPlotHook", getHook("plot.new"))
+        setConfig("oldGridHook", getHook("grid.newpage"))
         setHook("plot.new", cacherPlotHook, "append")
         setHook("grid.newpage", cacherGridHook, "append")
 }
 
 unsetHookFunctions <- function() {
-        setHook("plot.new", .config$oldPlotHook, "replace")
-        setHook("grid.newpage", .config$oldGridHook, "replace")
+        setHook("plot.new", getConfig("oldPlotHook"), "replace")
+        setHook("grid.newpage", getConfig("oldGridHook"), "replace")
 }
 
 setConfig <- function(name, value) {
@@ -74,6 +72,8 @@ getConfig <- function(name) {
                 NULL
         })
 }
+
+.config <- new.env(parent = emptyenv())
 
 ################################################################################
 
@@ -93,22 +93,23 @@ cacher <- cc <- function(file, cachedir = ".cache",
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
-        .config$cachedir <- cachedir
-        .config$metadata <- metadata
-        .config$new.plot <- FALSE
-        .config$logfile <- logfile
-        .config$file <- file
-        .config$filedir <- file.path(cachedir, "files")
-        .config$fileList <- getFileList()
+        setConfig("cachedir", cachedir)
+        setConfig("metadata", metadata)
+        setConfig("new.plot", FALSE)
+        setConfig("logfile", logfile)
+        setConfig("file", file)
+        setConfig("filedir", file.path(cachedir, "files"))
+        setConfig("fileList", getFileList())
 
         initForceEvalList()
 
         for(i in seq_along(exprList)) {
                 expr <- exprList[i]
-                msg <- sprintf("%d: %s", i, deparse(expr[[1]], width=30)[1])
+                exprStr <- deparse(expr[[1]],width=getConfig("exprDeparseWidth"))[1]
+                msg <- sprintf("%d: %s", i, exprStr)
                 logMessage(msg)
                 window.idx <- seq.int(max(0, i - window.size), i - 1)
-                .config$history <- exprList[window.idx]
+                setConfig("history", exprList[window.idx])
 
                 runExpression(expr)
                 writeMetadata(expr)
@@ -120,15 +121,15 @@ cacher <- cc <- function(file, cachedir = ".cache",
 writeMetadata <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
         
-        entry <- data.frame(codefile = .config$file,
+        entry <- data.frame(codefile = getConfig("file"),
                             expr = deparse(expr[[1]], width = exprWidth)[1],
-                            objects = paste(.config$new.objects, collapse = ";"),
-                            files = paste(.config$new.files, collapse = ";"),
-                            exprID = hashExpr(expr, .config$history),
+                            objects = paste(getConfig("new.objects"),collapse=";"),
+                            files = paste(getConfig("new.files"), collapse = ";"),
+                            exprID = hashExpr(expr, getConfig("history")),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)),
                             time = Sys.time())
-        write.dcf(entry, file = .config$metadata, append = TRUE, width = 5000)
+        write.dcf(entry, file = getConfig("metadata"), append = TRUE, width = 5000)
         invisible(entry)
 }
 
@@ -138,23 +139,23 @@ isCached <- function(exprFile) {
 
 checkNewFiles <- function() {
         current <- getFileList()
-        newfiles <- setdiff(current, .config$fileList)
+        newfiles <- setdiff(current, getConfig("fileList"))
         files.new <- length(newfiles) > 0
 
         if(files.new) {
                 logMessage("  expression created file(s) ",
                            paste(newfiles, collapse = ", "))
-                .config$fileList <- c(.config$fileList, newfiles)
-                .config$new.files <- newfiles
+                setConfig("fileList", c(getConfig("fileList"), newfiles))
+                setConfig("new.files", newfiles)
         }
         else
-                .config$new.files <- ""
+                setConfig("new.files", "")
         files.new
 }
 
 checkNewPlot <- function() {
-        if(newplot <- .config$new.plot) 
-                .config$new.plot <- FALSE
+        if(newplot <- getConfig("new.plot")) 
+                setConfig("new.plot", FALSE)
         newplot
 }
 
@@ -162,7 +163,7 @@ runExpression <- function(expr) {
         ## 'expr' is a single expression, so something like 'a <- 1'
         if(checkForceEvalList(expr)) {
                 logMessage("  force expression evaluation")
-                .config$new.objects <- ""
+                setConfig("new.objects", "")
                 
                 out <- withVisible({
                         eval(expr, globalenv(), baseenv())
@@ -189,12 +190,12 @@ runExpression <- function(expr) {
         }
         logMessage("  -- loading expr from cache")
         objects <- cacheLazyLoad(exprFile, globalenv())
-        .config$new.objects <- objects
+        setConfig("new.objects", objects)
         invisible(objects)
 }
 
 exprFileName <- function(expr) {
-        file.path(.config$cachedir, hashExpr(expr, .config$history))
+        file.path(getConfig("cachedir"), hashExpr(expr, getConfig("history")))
 }
 
 hash <- function(object) {
@@ -301,7 +302,7 @@ evalAndCache <- function(expr, exprFile) {
 ## Handling expressions with side effects
 
 forceEvalListFile <- function() {
-        file.path(.config$cachedir, ".ForceEvalList")
+        file.path(getConfig("cachedir"), ".ForceEvalList")
 }
 
 updateForceEvalList <- function(expr) {
