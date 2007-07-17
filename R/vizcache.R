@@ -7,8 +7,8 @@ code <- function(num = NULL, cachedir = ".cache") {
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
         meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep=".")))
-        expr <- parse(srcfile)
-        srcref <- attr(expr, "srcref")
+        exprList <- parse(srcfile)
+        srcref <- attr(exprList, "srcref")
 
         if(is.null(num)) {
                 index <- paste(seq_len(nrow(meta)), meta[, "expr"], sep = "  ")
@@ -29,6 +29,7 @@ code <- function(num = NULL, cachedir = ".cache") {
                         indent <- as.character(i)
                 writeLines(paste(indent, expr, sep = "  "))
         }
+        invisible(exprList[num])
 }
 
 runcode <- function(num, env = parent.frame(), cachedir = ".cache",
@@ -74,6 +75,6 @@ skipcode <- function(num, append = TRUE) {
                 setConfig("skipcode", num)
         else {
                 current <- getConfig("skipcode")
-                setConfig("skipcode", unique(c(current, num)))
+                setConfig("skipcode", sort(unique(c(current, num))))
         }
 }
