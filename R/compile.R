@@ -107,7 +107,10 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = NULL,
                 exprStr <- deparse(expr[[1]],width=getConfig("exprDeparseWidth"))[1]
                 msg <- sprintf("%d: %s", i, exprStr)
                 logMessage(msg)
-                window.idx <- seq.int(max(0, i - window.size), i - 1)
+                window.idx <- if(window.size == 0)
+                        0
+                else
+                        seq.int(max(0, i - window.size), i - 1)
                 setConfig("history", exprList[window.idx])
 
                 runExpression(expr)
