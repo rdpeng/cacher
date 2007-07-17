@@ -22,10 +22,7 @@ library(digest)
 logMessage <- function(...) {
         args <- list(...)
         msg <- paste(paste(args, collapse = ""), "\n", sep = "")
-        out <- if(is.null(getConfig("logfile")))
-                stderr()
-        else
-                getConfig("logfile")
+        out <- getConfig("logfile")
         cat(msg, file = out, append = TRUE)
 }
 
@@ -77,19 +74,22 @@ getConfig <- function(name) {
 
 ################################################################################
 
-cacher <- cc <- function(file, cachedir = ".cache",
-                         logfile = paste(file, "log", sep = "."),
+cacher <- cc <- function(file, cachedir = ".cache", logfile = NA,
                          window.size = Inf) {
         exprList <- parse(file, srcfile = NULL)
         
         dir.create(cachedir, showWarnings = FALSE)
-        metadata <- file.path(cachedir, ".metadata")
+        metadata <- file.path(cachedir, paste(file, "meta", sep = "."))
         file.create(metadata)
-        dir.create(file.path(cachedir, "files"), showWarnings = FALSE)
         
-        if(!is.null(logfile))
+        if(is.na(logfile)) {
+                logfile <- file.path(cachedir, paste(file,"log",sep="."))
                 file.create(logfile)
-
+        }
+        else if(is.null(logfile))
+                logfile <- stderr()
+        else
+                file.create(logfile)
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
@@ -98,7 +98,6 @@ cacher <- cc <- function(file, cachedir = ".cache",
         setConfig("new.plot", FALSE)
         setConfig("logfile", logfile)
         setConfig("file", file)
-        setConfig("filedir", file.path(cachedir, "files"))
         setConfig("fileList", getFileList())
 
         initForceEvalList()
