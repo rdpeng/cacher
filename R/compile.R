@@ -113,6 +113,7 @@ cacher <- cc <- function(file, cachedir = ".cache", logfile = NULL,
                 runExpression(expr)
                 writeMetadata(expr)
         }
+        setConfig("srcfile", file)
 }
 
 ################################################################################
