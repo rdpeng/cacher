@@ -93,11 +93,3 @@ skipcode <- function(num, append = TRUE) {
                 setConfig("skipcode", sort(unique(c(current, num))))
         }
 }
-
-editcode <- function(srcfile) {
-        if(missing(srcfile))
-                srcfile <- getConfig("srcfile")
-        if(is.null(srcfile))
-                stop("set 'srcfile' with 'setConfig'")
-        file.edit(srcfile)
-}

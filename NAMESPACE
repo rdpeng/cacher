@@ -2,7 +2,6 @@ export(
        "code",
        "runcode",
        "skipcode",
-       "editcode",
        "cacher",
        "cc",
        "setConfig",
