@@ -7,7 +7,8 @@ export(
        "setConfig",
        "getConfig",
        "setFile",
-       "showobjects"
+       "showobjects",
+       "package"
        )
 
 import(digest)
