@@ -6,7 +6,6 @@ code <- function(num = NULL, cachedir = ".cache") {
         
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
-        meta <- read.dcf(file.path(cachedir, paste(srcfile,"meta",sep=".")))
         exprList <- parse(srcfile)
         srcref <- attr(exprList, "srcref")
         
@@ -47,6 +46,13 @@ code <- function(num = NULL, cachedir = ".cache") {
         invisible(exprList[num])
 }
 
+showobjects <- function(num, cachedir = ".cache") {
+        srcfile <- getConfig("srcfile")
+        meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep = ".")))
+        obj <- strsplit(meta[num, "objects"], ";", fixed = TRUE)
+        unique(unlist(obj))
+}
+                        
 runcode <- function(num, env = parent.frame(), cachedir = ".cache",
                     forceAll = FALSE) {
         srcfile <- getConfig("srcfile")

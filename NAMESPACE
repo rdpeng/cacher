@@ -6,7 +6,8 @@ export(
        "cc",
        "setConfig",
        "getConfig",
-       "setFile"
+       "setFile",
+       "showobjects"
        )
 
 import(digest)
