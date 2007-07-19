@@ -6,7 +6,8 @@ export(
        "cacher",
        "cc",
        "setConfig",
-       "getConfig"
+       "getConfig",
+       "setFile"
        )
 
 import(digest)

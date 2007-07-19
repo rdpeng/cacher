@@ -58,6 +58,10 @@ unsetHookFunctions <- function() {
         setHook("grid.newpage", getConfig("oldGridHook"), "replace")
 }
 
+setFile <- function(srcfile) {
+        setConfig("srcfile", srcfile)
+}
+
 setConfig <- function(name, value) {
         assign(name, value, .config, inherits = FALSE)
 }
