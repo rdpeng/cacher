@@ -29,7 +29,7 @@ showExpressions <- function(num, srcref) {
         file.show(tfile)        
 }
 
-code <- function(num = NULL) {
+code <- function(num = NULL, full = FALSE) {
         cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
         
@@ -37,11 +37,12 @@ code <- function(num = NULL) {
                 stop("set 'srcfile' with 'setConfig'")
         exprList <- parse(srcfile)
         
-        if(is.null(num)) {
+        if(is.null(num))
+                num <- seq_len(length(exprList))
+        if(!full) {
                 expr.print <- sapply(exprList, function(x) {
                         deparse(x, width = getConfig("exprDeparseWidth"))[1]
                 })
-                num <- seq_len(length(exprList))
         }
         else
                 expr.print <- attr(exprList, "srcref")
