@@ -55,7 +55,23 @@ showobjects <- function(num) {
         obj <- strsplit(meta[num, "objects"], ";", fixed = TRUE)
         unique(unlist(obj))
 }
-                        
+
+loadcache <- function(num, env = parent.frame()) {
+        cachedir <- getConfig("cachedir")
+        srcfile <- getConfig("srcfile")
+        meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep=".")))
+
+        if(missing(num))
+                num <- seq_len(nrow(meta))
+        out <- vector("list", length = length(num))
+        
+        for(i in num) {
+                cacheFile <- file.path(cachedir, meta[i, "exprID"])
+                out[[i]] <- cacheLazyLoad(cacheFile, env)
+        }
+        invisible(unique(unlist(out)))
+}
+
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
