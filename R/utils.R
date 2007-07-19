@@ -3,8 +3,6 @@ package <- function(srcfile, cachedir, other = character(0)) {
                 srcfile <- getConfig("srcfile")
         if(missing(cachedir))
                 cachedir <- getConfig("cachedir")
-        message("creating zip file...")
-
         name <- paste(tempfile(), "zip", sep = ".")
         cmd <- paste("zip -r", name, cachedir, srcfile,
                      paste(other, collapse = " "))
