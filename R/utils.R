@@ -1,13 +1,20 @@
-package <- function(name, srcfile, cachedir) {
+package <- function(srcfile, cachedir, other = character(0)) {
         if(missing(srcfile))
                 srcfile <- getConfig("srcfile")
         if(missing(cachedir))
                 cachedir <- getConfig("cachedir")
-        if(length(grep("\\.zip$", name, perl = TRUE)) == 0)
-                name <- paste(name, "zip", sep = ".")
-        message(gettextf("creating zip file '%s'", name))
+        message("creating zip file...")
 
-        cmd <- paste("zip -r", name, cachedir, srcfile)
+        name <- paste(tempfile(), "zip", sep = ".")
+        cmd <- paste("zip -r", name, cachedir, srcfile,
+                     paste(other, collapse = " "))
         out <- system(cmd, intern = TRUE)
+        checksum <- md5sum(name)
+        newname <- paste("./cpkg-", checksum, ".zip", sep = "")
+        message(gettextf("creating package '%s'", basename(newname)))
+        status <- file.copy(name, newname)
+
+        if(!status)
+                warning("problem creating package file")
         invisible(out)
 }

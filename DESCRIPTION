@@ -3,7 +3,7 @@ Title: Tools for caching computations
 Version: 0.1
 Date: 2007-07-19
 Depends: R (>= 2.5.1)
-Imports: digest, utils
+Imports: digest, utils, tools
 LazyLoad: yes
 Author: Roger D. Peng <rpeng@jhsph.edu>
 Maintainer: Roger D. Peng <rpeng@jhsph.edu>

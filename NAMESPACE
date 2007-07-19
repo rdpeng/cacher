@@ -13,3 +13,4 @@ export(
 
 import(digest)
 import(utils)
+import(tools)

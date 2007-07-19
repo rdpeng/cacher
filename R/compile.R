@@ -17,8 +17,6 @@
 ## 02110-1301, USA
 ###############################################################################
 
-library(digest)
-
 logMessage <- function(...) {
         args <- list(...)
         msg <- paste(paste(args, collapse = ""), "\n", sep = "")
@@ -207,7 +205,7 @@ exprFileName <- function(expr) {
 }
 
 hash <- function(object) {
-        digest(object, algo = "sha1")
+        digest(object, algo = "md5")
 }
 
 hashExpr <- function(expr, history) {
