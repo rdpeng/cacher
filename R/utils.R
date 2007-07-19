@@ -4,6 +4,7 @@ package <- function(srcfile, cachedir, other = character(0)) {
         if(missing(cachedir))
                 cachedir <- getConfig("cachedir")
         name <- paste(tempfile(), "zip", sep = ".")
+
         cmd <- paste("zip -r", name, cachedir, srcfile,
                      paste(other, collapse = " "))
         out <- system(cmd, intern = TRUE)

@@ -1,31 +1,11 @@
 ################################################################################
 ## Tools for exploring the cache
 
-code <- function(num = NULL) {
-        cachedir <- getConfig("cachedir")
-        srcfile <- getConfig("srcfile")
+showExpressions <- function(num, srcref) {
+        tfile <- tempfile()
+        con <- file(tfile, "w")
+        on.exit(close(con))
         
-        if(is.null(srcfile))
-                stop("set 'srcfile' with 'setConfig'")
-        exprList <- parse(srcfile)
-        srcref <- attr(exprList, "srcref")
-        
-        if(is.null(num)) {
-                expr.print <- sapply(exprList, function(x) {
-                        deparse(x, width = getConfig("exprDeparseWidth"))[1]
-                })
-                num <- seq_len(length(exprList))
-                skip <- num %in% skipcode()
-                indent <- as.character(num)
-                indent[skip] <- paste(indent[skip], "*", sep = "")
-                indent <- paste(indent, "  ", sep = "")
-
-                index <- paste(indent, expr.print, sep = "")
-                writeLines(index)
-
-                return(invisible(NULL))
-        }
-        ## 'num' is an integer vector
         skip <- skipcode()
 
         for(i in num) {
@@ -42,9 +22,30 @@ code <- function(num = NULL) {
                 }
                 else
                         indent <- exprnum
-                writeLines(paste(indent, expr, sep = "  "))
+                writeLines(paste(indent, expr, sep = "  "), con)
         }
-        invisible(exprList[num])
+        close(con)
+        on.exit()
+        file.show(tfile)        
+}
+
+code <- function(num = NULL) {
+        cachedir <- getConfig("cachedir")
+        srcfile <- getConfig("srcfile")
+        
+        if(is.null(srcfile))
+                stop("set 'srcfile' with 'setConfig'")
+        exprList <- parse(srcfile)
+        
+        if(is.null(num)) {
+                expr.print <- sapply(exprList, function(x) {
+                        deparse(x, width = getConfig("exprDeparseWidth"))[1]
+                })
+                num <- seq_len(length(exprList))
+        }
+        else
+                expr.print <- attr(exprList, "srcref")
+        showExpressions(num, expr.print)
 }
 
 showobjects <- function(num) {
