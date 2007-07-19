@@ -1,7 +1,8 @@
 ################################################################################
 ## Tools for exploring the cache
 
-code <- function(num = NULL, cachedir = ".cache") {
+code <- function(num = NULL) {
+        cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
         
         if(is.null(srcfile))
@@ -46,15 +47,16 @@ code <- function(num = NULL, cachedir = ".cache") {
         invisible(exprList[num])
 }
 
-showobjects <- function(num, cachedir = ".cache") {
+showobjects <- function(num) {
+        cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
         meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep = ".")))
         obj <- strsplit(meta[num, "objects"], ";", fixed = TRUE)
         unique(unlist(obj))
 }
                         
-runcode <- function(num, env = parent.frame(), cachedir = ".cache",
-                    forceAll = FALSE) {
+runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
+        cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
         
         if(is.null(srcfile))
