@@ -52,7 +52,13 @@ code <- function(num = NULL, full = FALSE) {
 showobjects <- function(num) {
         cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
+
+        if(is.null(srcfile))
+                stop("set 'srcfile' with 'setConfig'")
         meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep = ".")))
+
+        if(missing(num))
+                num <- seq_len(nrow(meta))
         obj <- strsplit(meta[num, "objects"], ";", fixed = TRUE)
         unique(unlist(obj))
 }
