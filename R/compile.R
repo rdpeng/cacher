@@ -76,25 +76,54 @@ getConfig <- function(name) {
 
 ################################################################################
 
-cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL,
-                         window.size = Inf) {
-        exprList <- parse(srcfile, srcfile = NULL)
-
+mkdirs <- function(cachedir) {
         dir.create(cachedir, showWarnings = FALSE)
-        dir.create(file.path(cachedir, "db"), showWarnings = FALSE,
-                   recursive = TRUE)
-        metadata <- file.path(cachedir, paste(srcfile, "meta", sep = "."))
-        file.create(metadata)
-        file.copy(srcfile, file.path(cachedir, srcfile))
-        
+        dir.create(dbdir(cachedir), showWarnings = FALSE, recursive = TRUE)
+        dir.create(srcdir(cachedir), showWarnings = FALSE, recursive = TRUE)
+        dir.create(logdir(cachedir), showWarnings = FALSE, recursive = TRUE)
+        dir.create(metadir(cachedir), showWarnings = FALSE, recursive = TRUE)
+}
+
+metadir <- function(cachedir) {
+        file.path(cachedir, "meta")
+}
+
+logdir <- function(cachedir) {
+        file.path(cachedir, "log")
+}
+
+dbdir <- function(cachedir) {
+        file.path(cachedir, "db")
+}
+
+srcdir <- function(cachedir) {
+        file.path(cachedir, "src")
+}
+
+createLogFile <- function(cachedir, logfile, srcfile) {
         if(is.null(logfile)) {
-                logfile <- file.path(cachedir, paste(srcfile,"log",sep="."))
+                logfile <- file.path(logdir(cachedir),
+                                     paste(srcfile, "log", sep="."))
                 file.create(logfile)
         }
         if(is.na(logfile)) 
                 logfile <- stderr()
         else
                 file.create(logfile)
+}
+
+################################################################################
+
+cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
+        exprList <- parse(srcfile, srcfile = NULL)
+
+        mkdirs(cachedir)
+        metadata <- file.path(metadir(cachedir),
+                              paste(srcfile, "meta", sep = "."))
+        file.create(metadata)
+        file.copy(srcfile, srcdir(cachedir))
+
+        createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
@@ -112,11 +141,7 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL,
                 exprStr <- deparse(expr[[1]],width=getConfig("exprDeparseWidth"))[1]
                 msg <- sprintf("%d: %s", i, exprStr)
                 logMessage(msg)
-                window.idx <- if(window.size == 0)
-                        0
-                else
-                        seq.int(max(0, i - window.size), i - 1)
-                setConfig("history", exprList[window.idx])
+                setConfig("history", exprList[seq_len(i - 1)])
 
                 runExpression(expr)
                 writeMetadata(expr)
