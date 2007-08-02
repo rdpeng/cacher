@@ -79,10 +79,13 @@ getConfig <- function(name) {
 cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL,
                          window.size = Inf) {
         exprList <- parse(srcfile, srcfile = NULL)
-        
+
         dir.create(cachedir, showWarnings = FALSE)
+        dir.create(file.path(cachedir, "db"), showWarnings = FALSE,
+                   recursive = TRUE)
         metadata <- file.path(cachedir, paste(srcfile, "meta", sep = "."))
         file.create(metadata)
+        file.copy(srcfile, file.path(cachedir, srcfile))
         
         if(is.null(logfile)) {
                 logfile <- file.path(cachedir, paste(srcfile,"log",sep="."))
@@ -199,7 +202,8 @@ runExpression <- function(expr) {
 }
 
 exprFileName <- function(expr) {
-        file.path(getConfig("cachedir"), hashExpr(expr, getConfig("history")))
+        file.path(getConfig("cachedir"), "db",
+                  hashExpr(expr, getConfig("history")))
 }
 
 hash <- function(object) {
