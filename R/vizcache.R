@@ -75,6 +75,8 @@ loadcache <- function(num, env = parent.frame()) {
         out <- vector("list", length = length(num))
         
         for(i in num) {
+                if(as.integer(meta[i, "forceEval"]))
+                        next
                 cacheFile <- file.path(dbdir(cachedir), meta[i, "exprID"])
                 out[[i]] <- cacheLazyLoad(cacheFile, env)
         }
