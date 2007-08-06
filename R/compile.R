@@ -158,7 +158,7 @@ writeMetadata <- function(expr) {
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
                             files = paste(getConfig("new.files"), collapse = ";"),
-                            exprID = hashExpr(expr, getConfig("history")),
+                            exprID = basename(exprFileName(expr)),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)),
                             time = Sys.time())
