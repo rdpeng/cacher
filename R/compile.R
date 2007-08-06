@@ -110,6 +110,7 @@ createLogFile <- function(cachedir, logfile, srcfile) {
                 logfile <- stderr()
         else
                 file.create(logfile)
+        logfile
 }
 
 ################################################################################
@@ -123,7 +124,7 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         file.create(metadata)
         file.copy(srcfile, srcdir(cachedir))
 
-        createLogFile(cachedir, logfile, srcfile)
+        logfile <- createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
