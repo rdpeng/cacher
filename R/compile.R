@@ -228,7 +228,7 @@ runExpression <- function(expr) {
 }
 
 exprFileName <- function(expr) {
-        file.path(getConfig("cachedir"), "db",
+        file.path(dbdir(getConfig("cachedir")),
                   hashExpr(expr, getConfig("history")))
 }
 
