@@ -55,7 +55,8 @@ showobjects <- function(num) {
 
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
-        meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep = ".")))
+        meta <- read.dcf(file.path(metadir(cachedir),
+                                   paste(srcfile, "meta", sep = ".")))
 
         if(missing(num))
                 num <- seq_len(nrow(meta))
@@ -66,14 +67,15 @@ showobjects <- function(num) {
 loadcache <- function(num, env = parent.frame()) {
         cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
-        meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep=".")))
+        meta <- read.dcf(file.path(metadir(cachedir),
+                                   paste(srcfile, "meta", sep=".")))
 
         if(missing(num))
                 num <- seq_len(nrow(meta))
         out <- vector("list", length = length(num))
         
         for(i in num) {
-                cacheFile <- file.path(cachedir, meta[i, "exprID"])
+                cacheFile <- file.path(dbdir(cachedir), meta[i, "exprID"])
                 out[[i]] <- cacheLazyLoad(cacheFile, env)
         }
         invisible(unique(unlist(out)))
@@ -85,7 +87,8 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
-        meta <- read.dcf(file.path(cachedir, paste(srcfile, "meta", sep=".")))
+        meta <- read.dcf(file.path(metadir(cachedir),
+                                   paste(srcfile, "meta", sep=".")))
         exprList <- parse(srcfile)
         forceEval <- as.logical(as.numeric(meta[, "forceEval"]))
         skip <- skipcode()
@@ -99,7 +102,8 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
                 }
                 if(!forceEval[i] && !forceAll) {
                         message("loading cache for expression ", i)
-                        cacheFile <- file.path(cachedir, meta[i, "exprID"])
+                        cacheFile <- file.path(dbdir(cachedir),
+                                               meta[i, "exprID"])
                         cacheLazyLoad(cacheFile, env)
                 }
                 else {
