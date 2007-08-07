@@ -13,7 +13,6 @@ saveWithIndex <- function(list = character(0), file, envir = parent.frame()) {
                      bytes = serialize(x, connection = NULL))
         })
         writeIndex(byteList, con)
-        writeOffset(con)
         writeData(byteList, con)
 }
 
@@ -27,19 +26,6 @@ writeIndex <- function(byteList, con) {
         else
                 index <- integer(0)
         serialize(index, con)
-}
-
-readOffset <- function(con) {
-        integerLen <- unserialize(con)
-        offset.raw <- unserialize(con)
-        integerLen + integerLen + offset.raw
-}
-
-writeOffset <- function(con) {
-        offset <- seek(con)
-        integerLen <- length(serialize(as.integer(1), NULL))
-        serialize(as.integer(integerLen), con)
-        serialize(as.integer(offset), con)
 }
 
 writeData <- function(byteList, con) {
@@ -62,9 +48,8 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
         else
                 dbfile <- file
         dbcon <- gzcon(file(dbfile, "rb"))
-        tryCatch({
-                index <- unserialize(dbcon)
-                offset <- readOffset(dbcon)
+        index <- tryCatch({
+                unserialize(dbcon)
         }, finally = {
                 if(isOpen(dbcon))
                         close(dbcon)
@@ -80,6 +65,8 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
                                 transferCacheFile(file, cachedir)
                         con <- gzfile(file, "rb")
                         tryCatch({
+                                junk <- unserialize(con)
+                                offset <- seek(con)
                                 seek(con, pos + offset)
                                 unserialize(con)
                         }, finally = {
