@@ -1,18 +1,18 @@
 ################################################################################
 
-clonecache <- function(id, cachedir = ".cache", download.cache = FALSE) {
-        ## For now, 'id' is a URL like http://asdf.org/.cache
+clonecache <- function(origin, cachedir = ".cache", download.cache = FALSE) {
+        ## For now, 'origin' is a URL like http://asdf.org/.cache
         mkdirs(cachedir)
         setConfig("cachedir", cachedir)
-        initDownload(id)
-        writeLines(id, file.path(cachedir, "ORIGIN"))
+        initDownload(origin)
+        writeLines(origin, file.path(cachedir, "ORIGIN"))
 
         if(download.cache) {
                 message("downloading cache database files")
                 dbfiles <- readLines(file.path(cachedir, "DBFILES"))
 
                 for(i in seq_along(dbfiles)) {
-                        src <- file.path(dbdir(id), dbfiles[i])
+                        src <- file.path(dbdir(origin), dbfiles[i])
                         dest <- file.path(dbdir(cachedir), dbfiles[i])
 
                         showMeter(i, length(dbfiles))
