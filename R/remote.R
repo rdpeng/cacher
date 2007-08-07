@@ -25,9 +25,12 @@ transferCacheFile <- function(cacheFile, cachedir) {
 
 download <- function(url, destfile, method, quiet = TRUE, mode = "w",
                        cacheOK = TRUE) {
-        isLocal <- length(grep("^file://", url, perl = TRUE)) > 0
+        isLocal <- length(grep("^\\w+://", url, perl = TRUE)) == 0
+        isFileURL <- length(grep("^file://", url, perl = TRUE)) > 0
 
-        if(isLocal) {
+        if(isLocal)
+                file.copy(url, destfile, overwrite = TRUE)
+        else if(isFileURL) {
                 url <- sub("^file://", "", url, perl = TRUE)
                 file.copy(url, destfile, overwrite = TRUE)
         }
