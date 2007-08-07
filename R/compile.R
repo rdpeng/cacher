@@ -67,7 +67,7 @@ setFile <- function(srcfile) {
 }
 
 showFiles <- function() {
-        cachedir <- getConfig(cachedir)
+        cachedir <- getConfig("cachedir")
         sf <- readLines(file.path(cachedir, "SRCFILES"))
         sf
 }
