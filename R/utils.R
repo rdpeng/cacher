@@ -1,12 +1,9 @@
-package <- function(srcfile, cachedir, other = character(0)) {
-        if(missing(srcfile))
-                srcfile <- getConfig("srcfile")
+package <- function(cachedir, other = character(0)) {
         if(missing(cachedir))
                 cachedir <- getConfig("cachedir")
         name <- paste(tempfile(), "zip", sep = ".")
 
-        cmd <- paste("zip -r", name, cachedir, srcfile,
-                     paste(other, collapse = " "))
+        cmd <- paste("zip -r", name, cachedir, paste(other, collapse = " "))
         out <- system(cmd, intern = TRUE)
         checksum <- md5sum(name)
         newname <- paste("./cpkg-", checksum, ".zip", sep = "")
