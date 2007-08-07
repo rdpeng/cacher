@@ -166,9 +166,14 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
 updateSrcFileList <- function(srcfile) {
         cachedir <- getConfig("cachedir")
-        oldlist <- readLines(file.path(cachedir, "SRCFILES"))
+        srcfilelist <- file.path(cachedir, "SRCFILES")
+
+        oldlist <- if(!file.exists(srcfilelist))
+                character(0)
+        else
+                readLines(srcfilelist)
         newlist <- unique(c(oldlist, srcfile))
-        writeLines(newlist, file.path(cachedir, "SRCFILES"))
+        writeLines(newlist, srcfilelist)
 }
 
 writeMetadata <- function(expr) {
