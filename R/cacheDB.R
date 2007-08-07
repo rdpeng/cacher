@@ -13,6 +13,7 @@ saveWithIndex <- function(list = character(0), file, envir = parent.frame()) {
                      bytes = serialize(x, connection = NULL))
         })
         writeIndex(byteList, con)
+        writeOffset(con)
         writeData(byteList, con)
 }
 
@@ -28,6 +29,19 @@ writeIndex <- function(byteList, con) {
         serialize(index, con)
 }
 
+readOffset <- function(con) {
+        integerLen <- unserialize(con)
+        offset.raw <- unserialize(con)
+        integerLen + integerLen + offset.raw
+}
+
+writeOffset <- function(con) {
+        offset <- seek(con)
+        integerLen <- length(serialize(as.integer(1), NULL))
+        serialize(as.integer(integerLen), con)
+        serialize(as.integer(offset), con)
+}
+
 writeData <- function(byteList, con) {
         for(entry in byteList) {
                 writeBin(entry$bytes, con)
@@ -39,10 +53,18 @@ isEmptyIndex <- function(idx) {
 }
 
 cacheLazyLoad <- function(file, envir = parent.frame()) {
-        dbcon <- gzfile(file, "rb")
+        cachedir <- getConfig("cachedir")
+
+        if(!file.exists(file)) {
+                origin <- readLines(file.path(cachedir, "ORIGIN"))
+                dbfile <- file.path(dbdir(origin), basename(file))
+        }
+        else
+                dbfile <- file
+        dbcon <- gzcon(file(dbfile, "rb"))
         tryCatch({
                 index <- unserialize(dbcon)
-                offset <- seek(dbcon)
+                offset <- readOffset(dbcon)
         }, finally = {
                 if(isOpen(dbcon))
                         close(dbcon)
@@ -52,7 +74,10 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
         wrap <- function(x, pos, env) {
                 force(x)
                 force(pos)
+
                 delayedAssign(x, {
+                        if(!file.exists(file))
+                                transferCacheFile(file, cachedir)
                         con <- gzfile(file, "rb")
                         tryCatch({
                                 seek(con, pos + offset)

@@ -82,9 +82,6 @@ loadcache <- function(num, env = parent.frame()) {
                 if(as.integer(meta[i, "forceEval"]))
                         next
                 cacheFile <- file.path(dbdir(cachedir), meta[i, "exprID"])
-
-                if(isClone())
-                        transferCacheFile(cacheFile, cachedir)
                 out[[i]] <- cacheLazyLoad(cacheFile, env)
         }
         invisible(unique(unlist(out)))
