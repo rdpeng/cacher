@@ -82,6 +82,9 @@ loadcache <- function(num, env = parent.frame()) {
                 if(as.integer(meta[i, "forceEval"]))
                         next
                 cacheFile <- file.path(dbdir(cachedir), meta[i, "exprID"])
+
+                if(isClone())
+                        transferCacheFile(cacheFile, cachedir)
                 out[[i]] <- cacheLazyLoad(cacheFile, env)
         }
         invisible(unique(unlist(out)))
@@ -107,9 +110,7 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
                 }
                 if(!forceEval[i] && !forceAll) {
                         message("loading cache for expression ", i)
-                        cacheFile <- file.path(dbdir(cachedir),
-                                               meta[i, "exprID"])
-                        cacheLazyLoad(cacheFile, env)
+                        loadcache(i, env)
                 }
                 else {
                         expr <- exprList[i]

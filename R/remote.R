@@ -1,11 +1,26 @@
 ################################################################################
 
-clonecache <- function(id) {
+clonecache <- function(id, cachedir = ".cache") {
         ## For now, 'id' is a URL like http://asdf.org/.cache
-        cachedir <- ".cache"
         mkdirs(cachedir)
         setConfig("cachedir", cachedir)
         initDownload(id)
+        writeLines(id, file.path(cachedir, "ORIGIN"))
+}
+
+isClone <- function() {
+        cachedir <- getConfig("cachedir")
+        file.exists(file.path(cachedir, "ORIGIN"))
+}
+
+transferCacheFile <- function(cacheFile, cachedir) {
+        if(file.exists(cacheFile))
+                return(NULL)
+        message("transferring cache db file")
+        origin <- readLines(file.path(cachedir, "ORIGIN"))
+        src <- file.path(dbdir(origin), basename(cacheFile))
+
+        ccdownload(src, cacheFile)
 }
 
 ccdownload <- function(url, destfile, method, quiet = FALSE, mode = "w",
@@ -35,3 +50,4 @@ initDownload <- function(id) {
                            file.path(srcdir(cachedir), srcfile))
         }
 }
+
