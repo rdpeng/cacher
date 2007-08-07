@@ -1,7 +1,7 @@
 ## Simple database implementation for cacheSweave
 
 saveWithIndex <- function(list = character(0), file, envir = parent.frame()) {
-        con <- file(file, "wb")
+        con <- gzfile(file, "wb")
         on.exit(close(con))
         
         byteList <- lapply(list, function(symname) {
@@ -39,7 +39,7 @@ isEmptyIndex <- function(idx) {
 }
 
 cacheLazyLoad <- function(file, envir = parent.frame()) {
-        dbcon <- file(file, "rb")
+        dbcon <- gzfile(file, "rb")
         tryCatch({
                 index <- unserialize(dbcon)
                 offset <- seek(dbcon)
@@ -53,7 +53,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
                 force(x)
                 force(pos)
                 delayedAssign(x, {
-                        con <- file(file, "rb")
+                        con <- gzfile(file, "rb")
                         tryCatch({
                                 seek(con, pos + offset)
                                 unserialize(con)
@@ -73,7 +73,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
 }
 
 getIndex <- function(file) {
-        con <- file(file, "rb")
+        con <- gzfile(file, "rb")
         on.exit(close(con))
 
         index <- unserialize(con)
