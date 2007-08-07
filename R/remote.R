@@ -41,7 +41,7 @@ isClone <- function() {
 transferCacheFile <- function(cacheFile, cachedir) {
         if(file.exists(cacheFile))
                 return(NULL)
-        message("transferring cache db file")
+        message("transferring cache db file ", basename(cacheFile))
         origin <- readLines(file.path(cachedir, "ORIGIN"))
         src <- file.path(dbdir(origin), basename(cacheFile))
 
