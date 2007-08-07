@@ -5,7 +5,7 @@ clonecache <- function(id) {
         cachedir <- ".cache"
         mkdirs(cachedir)
         setConfig("cachedir", cachedir)
-                      
+        initDownload(id)
 }
 
 ccdownload <- function(url, destfile, method, quiet = FALSE, mode = "w",
@@ -14,7 +14,7 @@ ccdownload <- function(url, destfile, method, quiet = FALSE, mode = "w",
 
         if(isLocal) {
                 url <- sub("^file://", "", url, perl = TRUE)
-                file.copy(url, destfile)
+                file.copy(url, destfile, overwrite = TRUE)
         }
         else 
                 download.file(url, destfile, method, quiet, mode, cacheOK)

@@ -10,7 +10,8 @@ export(
        "setFile",
        "showFiles",
        "showobjects",
-       "package"
+       "package",
+       "clonecache"
        )
 
 import(digest)
