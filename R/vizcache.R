@@ -29,6 +29,12 @@ showExpressions <- function(num, srcref) {
         file.show(tfile)        
 }
 
+metafile <- function(srcfile) {
+        cachedir <- getConfig("cachedir")
+        file.path(metadir(cachedir),
+                  paste(basename(srcfile), "meta", sep = "."))
+}
+
 code <- function(num = NULL, full = FALSE) {
         cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
@@ -55,8 +61,7 @@ showobjects <- function(num) {
 
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
-        meta <- read.dcf(file.path(metadir(cachedir),
-                                   paste(srcfile, "meta", sep = ".")))
+        meta <- read.dcf(metafile(srcfile))
 
         if(missing(num))
                 num <- seq_len(nrow(meta))
@@ -67,8 +72,7 @@ showobjects <- function(num) {
 loadcache <- function(num, env = parent.frame()) {
         cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
-        meta <- read.dcf(file.path(metadir(cachedir),
-                                   paste(srcfile, "meta", sep=".")))
+        meta <- read.dcf(metafile(srcfile))
 
         if(missing(num))
                 num <- seq_len(nrow(meta))
@@ -89,8 +93,7 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
-        meta <- read.dcf(file.path(metadir(cachedir),
-                                   paste(srcfile, "meta", sep=".")))
+        meta <- read.dcf(metafile(srcfile))
         exprList <- parse(srcfile)
         forceEval <- as.logical(as.numeric(meta[, "forceEval"]))
         skip <- skipcode()
