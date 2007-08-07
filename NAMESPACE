@@ -8,6 +8,7 @@ export(
        "setConfig",
        "getConfig",
        "setFile",
+       "showFiles",
        "showobjects",
        "package"
        )

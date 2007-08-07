@@ -57,7 +57,19 @@ unsetHookFunctions <- function() {
 }
 
 setFile <- function(srcfile) {
-        setConfig("srcfile", srcfile)
+        cachedir <- getConfig("cachedir")
+
+        if(file.exists(file.path(srcdir(cachedir), srcfile)))
+                setConfig("srcfile", srcfile)
+        else
+                stop(gettextf("source file '%s' not in cache directory",
+                              srcfile))
+}
+
+showFiles <- function() {
+        cachedir <- getConfig(cachedir)
+        sf <- readLines(file.path(cachedir, "SRCFILES"))
+        sf
 }
 
 setConfig <- function(name, value) {
