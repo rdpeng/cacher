@@ -349,7 +349,14 @@ evalAndCache <- function(expr, exprFile) {
         ## Get newly assigned object names
         keys <- ls(env, all.names = TRUE)
 
-        saveWithIndex(keys, exprFile, env)
+        status <- tryCatch({
+                saveWithIndex(keys, exprFile, env)
+        }, interrupt = function(cond) {
+                file.remove(exprFile)
+                cond
+        })
+        if(inherits(status, "condition"))
+                stop(status)
         keys
 }
 
