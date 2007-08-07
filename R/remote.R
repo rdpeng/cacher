@@ -20,10 +20,10 @@ transferCacheFile <- function(cacheFile, cachedir) {
         origin <- readLines(file.path(cachedir, "ORIGIN"))
         src <- file.path(dbdir(origin), basename(cacheFile))
 
-        ccdownload(src, cacheFile, mode = "wb")
+        download(src, cacheFile, mode = "wb")
 }
 
-ccdownload <- function(url, destfile, method, quiet = TRUE, mode = "w",
+download <- function(url, destfile, method, quiet = TRUE, mode = "w",
                        cacheOK = TRUE) {
         isLocal <- length(grep("^file://", url, perl = TRUE)) > 0
 
@@ -38,18 +38,18 @@ ccdownload <- function(url, destfile, method, quiet = TRUE, mode = "w",
 initDownload <- function(id) {
         cachedir <- getConfig("cachedir")
 
-        ccdownload(file.path(id, "SRCFILES"), file.path(cachedir, "SRCFILES"),
+        download(file.path(id, "SRCFILES"), file.path(cachedir, "SRCFILES"),
                    mode = "w")
         srcfiles <- readLines(file.path(cachedir, "SRCFILES"))
 
         for(srcfile in srcfiles) {
                 metafile <- file.path(metadir(id),
                                       paste(srcfile, "meta", sep = "."))
-                ccdownload(metafile,
-                           file.path(metadir(cachedir), basename(metafile)),
-                           mode = "w")
-                ccdownload(file.path(srcdir(id), srcfile),
-                           file.path(srcdir(cachedir), srcfile), mode = "w")
+                download(metafile,
+                         file.path(metadir(cachedir), basename(metafile)),
+                         mode = "w")
+                download(file.path(srcdir(id), srcfile),
+                         file.path(srcdir(cachedir), srcfile), mode = "w")
         }
 }
 
