@@ -160,9 +160,22 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 writeMetadata(expr)
         }
         updateSrcFileList(srcfile)
+        updateDBFileList()
 }
 
 ################################################################################
+
+updateDBFileList <- function() {
+        cachedir <- getConfig("cachedir")
+        dbfilelist <- file.path(cachedir, "DBFILES")
+        
+        oldlist <- if(!file.exists(dbfilelist))
+                character(0)
+        else
+                readLines(dbfilelist)
+        dbfiles <- unique(c(oldlist, dir(dbdir(cachedir))))
+        writeLines(dbfiles, dbfilelist)
+}
 
 updateSrcFileList <- function(srcfile) {
         cachedir <- getConfig("cachedir")
