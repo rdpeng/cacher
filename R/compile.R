@@ -58,8 +58,8 @@ unsetHookFunctions <- function() {
 
 setFile <- function(srcfile) {
         cachedir <- getConfig("cachedir")
-        cache.srcfile <- file.path(srcdir(cachedir), srcfile))
-        if(file.exists(cache.srcfile)
+        cache.srcfile <- file.path(srcdir(cachedir), srcfile)
+        if(file.exists(cache.srcfile))
                 setConfig("srcfile", cache.srcfile)
         else
                 stop(gettextf("source file '%s' not in cache directory",
