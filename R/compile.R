@@ -159,9 +159,17 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 runExpression(expr)
                 writeMetadata(expr)
         }
+        updateSrcFileList(srcfile)
 }
 
 ################################################################################
+
+updateSrcFileList <- function(srcfile) {
+        cachedir <- getConfig("cachedir")
+        oldlist <- readLines(file.path(cachedir, "SRCFILES"))
+        newlist <- unique(c(oldlist, srcfile))
+        writeLines(newlist, file.path(cachedir, "SRCFILES"))
+}
 
 writeMetadata <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
@@ -174,7 +182,8 @@ writeMetadata <- function(expr) {
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)),
                             time = Sys.time())
-        write.dcf(entry, file = getConfig("metadata"), append = TRUE, width = 5000)
+        write.dcf(entry, file = getConfig("metadata"), append = TRUE,
+                  width = 5000)
         invisible(entry)
 }
 
