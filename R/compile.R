@@ -68,7 +68,7 @@ setFile <- function(srcfile) {
 
 showFiles <- function() {
         cachedir <- getConfig("cachedir")
-        sf <- readLines(file.path(cachedir, "SRCFILES"))
+        sf <- readLines(file.path(cachedir, "srcfiles"))
         sf
 }
 
@@ -118,7 +118,7 @@ createLogFile <- function(cachedir, logfile, srcfile) {
                                      paste(srcfile, "log", sep="."))
                 file.create(logfile)
         }
-        if(is.na(logfile)) 
+        if(is.na(logfile))
                 logfile <- stderr()
         else
                 file.create(logfile)
@@ -167,8 +167,8 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
 updateDBFileList <- function() {
         cachedir <- getConfig("cachedir")
-        dbfilelist <- file.path(cachedir, "DBFILES")
-        
+        dbfilelist <- file.path(cachedir, "dbfiles")
+
         oldlist <- if(!file.exists(dbfilelist))
                 character(0)
         else
@@ -179,7 +179,7 @@ updateDBFileList <- function() {
 
 updateSrcFileList <- function(srcfile) {
         cachedir <- getConfig("cachedir")
-        srcfilelist <- file.path(cachedir, "SRCFILES")
+        srcfilelist <- file.path(cachedir, "srcfiles")
 
         oldlist <- if(!file.exists(srcfilelist))
                 character(0)
@@ -191,7 +191,7 @@ updateSrcFileList <- function(srcfile) {
 
 writeMetadata <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
-        
+
         entry <- data.frame(srcfile = getConfig("srcfile"),
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
@@ -226,7 +226,7 @@ checkNewFiles <- function() {
 }
 
 checkNewPlot <- function() {
-        if(newplot <- getConfig("new.plot")) 
+        if(newplot <- getConfig("new.plot"))
                 setConfig("new.plot", FALSE)
         newplot
 }
@@ -236,7 +236,7 @@ runExpression <- function(expr) {
         if(checkForceEvalList(expr)) {
                 logMessage("  force expression evaluation")
                 setConfig("new.objects", "")
-                
+
                 out <- withVisible({
                         eval(expr, globalenv(), baseenv())
                 })
@@ -245,16 +245,16 @@ runExpression <- function(expr) {
                 return(NULL)
         }
         exprFile <- exprFileName(expr)
-        
+
         if(!isCached(exprFile)) {
                 logMessage("  eval expr and cache")
                 keys <- evalAndCache(expr, exprFile)
-                
+
                 newfiles <- checkNewFiles()
                 newplot <- checkNewPlot()
 
                 forceEval <- (length(keys) == 0 || newplot || newfiles)
-                
+
                 if(forceEval && !checkForceEvalList(expr)) {
                         logMessage("  expression has side effect: ", hash(expr))
                         updateForceEvalList(expr)
@@ -279,7 +279,7 @@ hashExpr <- function(expr, history) {
         obj <- list(expr, history)
         hash(obj)
 }
-        
+
 
 ################################################################################
 
@@ -312,12 +312,12 @@ isNewOrModified <- function(symbolnames, e1, e2) {
                 in2 <- exists(s, e2, inherits = FALSE)
                 is.new <- !in1 && in2
                 is.deleted <- in1 && !in2
-                
+
                 if((!in1 && !in2) || is.deleted)
                         FALSE
                 else if(is.new)
                         TRUE
-                else 
+                else
                         !identical(get(s, e1, inherits = FALSE),
                                    get(s, e2, inherits = FALSE))
         })
@@ -326,7 +326,7 @@ isNewOrModified <- function(symbolnames, e1, e2) {
 ## If 'source()' was used, there may be new symbols in the global
 ## environment, unless 'source(local = TRUE)' was used.  Also applies
 ## for 'set.seed()'.
-        
+
 checkNewSymbols <- function(e1, e2) {
         if(identical(e1, e2))
                 return(character(0))
@@ -388,7 +388,7 @@ forceEvalListFile <- function() {
 updateForceEvalList <- function(expr) {
         con <- file(forceEvalListFile(), "a")
         on.exit(close(con))
-        
+
         writeLines(hash(expr), con)
 }
 

@@ -5,11 +5,11 @@ clonecache <- function(origin, cachedir = ".cache", download.cache = FALSE) {
         mkdirs(cachedir)
         setConfig("cachedir", cachedir)
         initDownload(origin)
-        writeLines(origin, file.path(cachedir, "ORIGIN"))
+        writeLines(origin, file.path(cachedir, "origin"))
 
         if(download.cache) {
                 message("downloading cache database files")
-                dbfiles <- readLines(file.path(cachedir, "DBFILES"))
+                dbfiles <- readLines(file.path(cachedir, "dbfiles"))
 
                 for(i in seq_along(dbfiles)) {
                         src <- file.path(dbdir(origin), dbfiles[i])
@@ -35,14 +35,14 @@ showMeter <- function(i, n) {
 
 isClone <- function() {
         cachedir <- getConfig("cachedir")
-        file.exists(file.path(cachedir, "ORIGIN"))
+        file.exists(file.path(cachedir, "origin"))
 }
 
 transferCacheFile <- function(cacheFile, cachedir) {
         if(file.exists(cacheFile))
                 return(NULL)
         message("transferring cache db file ", basename(cacheFile))
-        origin <- readLines(file.path(cachedir, "ORIGIN"))
+        origin <- readLines(file.path(cachedir, "origin"))
         src <- file.path(dbdir(origin), basename(cacheFile))
 
         download(src, cacheFile, mode = "wb")
@@ -59,16 +59,16 @@ download <- function(url, destfile, method, quiet = TRUE, mode = "w",
                 url <- sub("^file://", "", url, perl = TRUE)
                 file.copy(url, destfile, overwrite = TRUE)
         }
-        else 
+        else
                 download.file(url, destfile, method, quiet, mode, cacheOK)
 }
 
 initDownload <- function(id) {
         cachedir <- getConfig("cachedir")
 
-        download(file.path(id, "SRCFILES"), file.path(cachedir, "SRCFILES"),
+        download(file.path(id, "srcfiles"), file.path(cachedir, "srcfiles"),
                    mode = "w")
-        srcfiles <- readLines(file.path(cachedir, "SRCFILES"))
+        srcfiles <- readLines(file.path(cachedir, "srcfiles"))
 
         for(srcfile in srcfiles) {
                 metafile <- file.path(metadir(id),
@@ -78,8 +78,8 @@ initDownload <- function(id) {
                          mode = "w")
                 download(file.path(srcdir(id), srcfile),
                          file.path(srcdir(cachedir), srcfile), mode = "w")
-                download(file.path(id, "DBFILES"),
-                         file.path(cachedir, "DBFILES"), mode = "w")
+                download(file.path(id, "dbfiles"),
+                         file.path(cachedir, "dbfiles"), mode = "w")
         }
 }
 

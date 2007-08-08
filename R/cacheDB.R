@@ -3,7 +3,7 @@
 saveWithIndex <- function(list = character(0), file, envir = parent.frame()) {
         con <- gzfile(file, "wb")
         on.exit(close(con))
-        
+
         byteList <- lapply(list, function(symname) {
                 x <- get(symname, envir, inherits = FALSE)
 
@@ -21,7 +21,7 @@ writeIndex <- function(byteList, con) {
                 lens <- sapply(byteList, function(x) length(x$bytes))
                 index <- c(0, cumsum(lens)[-length(byteList)])
                 names(index) <- sapply(byteList, "[[", "key")
-                
+
         }
         else
                 index <- integer(0)
@@ -42,7 +42,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
         cachedir <- getConfig("cachedir")
 
         if(!file.exists(file)) {
-                origin <- readLines(file.path(cachedir, "ORIGIN"))
+                origin <- readLines(file.path(cachedir, "origin"))
                 dbfile <- file.path(dbdir(origin), basename(file))
         }
         else
@@ -77,7 +77,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
         keys <- names(index)
 
         if(is.null(keys))
-                stop("problem with lazy-load database index")        
+                stop("problem with lazy-load database index")
         for(i in seq_along(index)) {
                 wrap(keys[i], index[i], envir)
         }
