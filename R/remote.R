@@ -63,7 +63,7 @@ download <- function(url, destfile, method, quiet = TRUE, mode = "w",
 }
 
 initDownload <- function(id) {
-        cachedir <- cache()a
+        cachedir <- cache()
 
         message("downloading source file list")
         download(file.path(id, "srcfiles"), file.path(cachedir, "srcfiles"),
