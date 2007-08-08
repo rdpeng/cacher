@@ -1,25 +1,33 @@
 ################################################################################
 
-clonecache <- function(origin, cachedir = ".cache", download.cache = FALSE) {
-        ## For now, 'origin' is a URL like http://asdf.org/.cache
+clonecache <- function(origin, cachedir = ".cache", all.files = FALSE) {
+        ## 'origin' is a URL like http://asdf.org/.cache, or
+        ## file:///home/rpeng/.cache or a simple path like ~/.cache
+
         mkdirs(cachedir)
         cache(cachedir)
         initDownload(origin)
         writeLines(origin, file.path(cachedir, "origin"))
 
-        if(download.cache) {
-                message("downloading cache database files")
-                dbfiles <- readLines(file.path(cachedir, "dbfiles"))
+        if(all.files)
+                downloadCacheDB(cachedir)
+}
 
-                for(i in seq_along(dbfiles)) {
-                        src <- file.path(dbdir(origin), dbfiles[i])
-                        dest <- file.path(dbdir(cachedir), dbfiles[i])
+downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE) {
+        message("downloading cache database files")
+        dbfiles <- readLines(file.path(cachedir, "dbfiles"))
 
-                        showMeter(i, length(dbfiles))
-                        download(src, dest)
-                }
-                message("\nfinished")
+        for(i in seq_along(dbfiles)) {
+                src <- file.path(dbdir(origin), dbfiles[i])
+                dest <- file.path(dbdir(cachedir), dbfiles[i])
+
+                showMeter(i, length(dbfiles))
+
+                if(file.exists(dest) && skip.existing)
+                        next
+                download(src, dest)
         }
+        message("\nfinished")
 }
 
 showMeter <- function(i, n) {
