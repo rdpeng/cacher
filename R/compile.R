@@ -125,10 +125,10 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         on.exit(unsetHookFunctions())
 
         cache(cachedir)
+        sourcefile(srcfile)
         setConfig("metadata", metadata)
         setConfig("new.plot", FALSE)
         setConfig("logfile", logfile)
-        setConfig("srcfile", srcfile)
         setConfig("fileList", getFileList())
 
         initForceEvalList()
