@@ -10,13 +10,15 @@ clonecache <- function(origin, cachedir = ".cache", all.files = FALSE) {
         writeLines(origin, file.path(cachedir, "origin"))
 
         if(all.files)
-                downloadCacheDB(cachedir)
+                downloadCacheDB(cachedir, FALSE, origin)
 }
 
-downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE) {
+downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE, origin = NULL) {
         message("downloading cache database files")
         dbfiles <- readLines(file.path(cachedir, "dbfiles"))
 
+        if(is.null(origin))
+                origin <- readLines(file.path(cachedir, "origin"))
         for(i in seq_along(dbfiles)) {
                 src <- file.path(dbdir(origin), dbfiles[i])
                 dest <- file.path(dbdir(cachedir), dbfiles[i])
