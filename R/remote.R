@@ -66,6 +66,7 @@ download <- function(url, destfile, method, quiet = TRUE, mode = "w",
 initDownload <- function(id) {
         cachedir <- getConfig("cachedir")
 
+        message("downloading source file list")
         download(file.path(id, "srcfiles"), file.path(cachedir, "srcfiles"),
                    mode = "w")
         srcfiles <- readLines(file.path(cachedir, "srcfiles"))
@@ -73,11 +74,14 @@ initDownload <- function(id) {
         for(srcfile in srcfiles) {
                 metafile <- file.path(metadir(id),
                                       paste(srcfile, "meta", sep = "."))
+                message("downloading metadata")
                 download(metafile,
                          file.path(metadir(cachedir), basename(metafile)),
                          mode = "w")
+                message("downloading source files")
                 download(file.path(srcdir(id), srcfile),
                          file.path(srcdir(cachedir), srcfile), mode = "w")
+                message("downloading cache database file list")
                 download(file.path(id, "dbfiles"),
                          file.path(cachedir, "dbfiles"), mode = "w")
         }
