@@ -21,7 +21,7 @@ packageArchive <- function(id) {
         if(is.null(baseurl))
                 stop("archive URL not set")
         prefix <- substring(id, 1, 2)
-        file.path(baseurl, "packages", prefix, id, cachedir)
+        file.path(baseurl, "packages", prefix, id, ".cache")
 }
 
 downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE, origin = NULL) {
