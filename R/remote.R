@@ -18,18 +18,18 @@ clonecache <- function(origin, cachedir = ".cache", download.cache = FALSE) {
                         showMeter(i, length(dbfiles))
                         download(src, dest)
                 }
-                cat("\nfinished\n")
+                message("\nfinished")
         }
 }
 
 showMeter <- function(i, n) {
         if(n < getOption("width"))
-                cat("=", sep = "")
+                message("=", appendLF = FALSE)
         else {
                 mark <- i * getOption("width") / n
 
                 if(floor(mark) == ceiling(mark))
-                        cat("=", sep = "")
+                        message("=", appendLF = FALSE)
         }
 }
 
