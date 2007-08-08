@@ -1,9 +1,11 @@
 ################################################################################
 
-clonecache <- function(origin, cachedir = ".cache", all.files = FALSE) {
+clonecache <- function(origin, cachedir = ".cache", all.files = FALSE, id = NULL) {
         ## 'origin' is a URL like http://asdf.org/.cache, or
         ## file:///home/rpeng/.cache or a simple path like ~/.cache
 
+        if(!is.null(id))
+                origin <- packageArchive(id)
         mkdirs(cachedir)
         cache(cachedir)
         initDownload(origin)
@@ -11,6 +13,11 @@ clonecache <- function(origin, cachedir = ".cache", all.files = FALSE) {
 
         if(all.files)
                 downloadCacheDB(cachedir, FALSE, origin)
+}
+
+packageArchive <- function(id) {
+        baseurl <- getConfig("archive")
+        file.path(baseurl, "packages", id, ".cache")
 }
 
 downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE, origin = NULL) {
