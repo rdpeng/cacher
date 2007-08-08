@@ -93,7 +93,7 @@ showobjects <- function(num) {
         srcfile <- sourcefile()
 
         if(is.null(srcfile))
-                stop("set 'srcfile' with 'setConfig'")
+                stop("set source file with 'sourcefile'")
         meta <- read.dcf(metafile(srcfile))
 
         if(missing(num))
@@ -105,6 +105,9 @@ showobjects <- function(num) {
 loadcache <- function(num, env = parent.frame()) {
         cachedir <- cache()
         srcfile <- sourcefile()
+
+        if(is.null(srcfile))
+                stop("set source file with 'sourcefile'")
         meta <- read.dcf(metafile(srcfile))
 
         if(missing(num))
@@ -125,7 +128,7 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         srcfile <- sourcefile()
 
         if(is.null(srcfile))
-                stop("set 'srcfile' with 'setConfig'")
+                stop("set source file with 'sourcefile'")
         meta <- read.dcf(metafile(srcfile))
         exprList <- parse(srcfile)
         forceEval <- as.logical(as.numeric(meta[, "forceEval"]))
