@@ -1,11 +1,27 @@
 ################################################################################
 ## Tools for exploring the cache
 
+sourcefile <- function(srcfile = NULL) {
+        cachedir <- getConfig("cachedir")
+
+        if(is.null(srcfile)) {
+                sf <- readLines(file.path(cachedir, "srcfiles"))
+                return(sf)
+        }
+        cache.srcfile <- file.path(srcdir(cachedir), srcfile)
+
+        if(file.exists(cache.srcfile))
+                setConfig("srcfile", cache.srcfile)
+        else
+                stop(gettextf("source file '%s' not in cache directory",
+                              srcfile))
+}
+
 showExpressions <- function(num, srcref) {
         tfile <- tempfile()
         con <- file(tfile, "w")
         on.exit(close(con))
-        
+
         skip <- skipcode()
 
         for(i in num) {
@@ -26,7 +42,7 @@ showExpressions <- function(num, srcref) {
         }
         close(con)
         on.exit()
-        file.show(tfile)        
+        file.show(tfile)
 }
 
 metafile <- function(srcfile) {
@@ -36,13 +52,13 @@ metafile <- function(srcfile) {
 }
 
 code <- function(num = NULL, full = FALSE) {
-        cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
-        
+
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
+        cachedir <- getConfig("cachedir")
         exprList <- parse(srcfile)
-        
+
         if(is.null(num))
                 num <- seq_len(length(exprList))
         if(!full) {
@@ -77,7 +93,7 @@ loadcache <- function(num, env = parent.frame()) {
         if(missing(num))
                 num <- seq_len(nrow(meta))
         out <- vector("list", length = length(num))
-        
+
         for(i in num) {
                 if(as.integer(meta[i, "forceEval"]))
                         next
@@ -90,7 +106,7 @@ loadcache <- function(num, env = parent.frame()) {
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         cachedir <- getConfig("cachedir")
         srcfile <- getConfig("srcfile")
-        
+
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
         meta <- read.dcf(metafile(srcfile))

@@ -56,22 +56,6 @@ unsetHookFunctions <- function() {
         setHook("grid.newpage", getConfig("oldGridHook"), "replace")
 }
 
-setFile <- function(srcfile) {
-        cachedir <- getConfig("cachedir")
-        cache.srcfile <- file.path(srcdir(cachedir), srcfile)
-        if(file.exists(cache.srcfile))
-                setConfig("srcfile", cache.srcfile)
-        else
-                stop(gettextf("source file '%s' not in cache directory",
-                              srcfile))
-}
-
-showFiles <- function() {
-        cachedir <- getConfig("cachedir")
-        sf <- readLines(file.path(cachedir, "srcfiles"))
-        sf
-}
-
 setConfig <- function(name, value) {
         assign(name, value, .config, inherits = FALSE)
 }
