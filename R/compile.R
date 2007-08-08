@@ -57,6 +57,12 @@ unsetHookFunctions <- function() {
 }
 
 setConfig <- function(name, value) {
+        allowed <- c("srcfile", "cachedir", "oldPlotHook", "oldGridHook",
+                     "new.plot", "metadata", "logfile", "fileList",
+                     "new.files", "new.objects", "skipcode",
+                     "exprDeparseWidth", "history", "archive")
+        if(!(name %in% allowed))
+                stop(gettextf("invalid config option '%s'", name))
         assign(name, value, .config, inherits = FALSE)
 }
 
