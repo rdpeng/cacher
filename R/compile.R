@@ -39,7 +39,7 @@ getFileList <- function() {
                 n <- dir(recursive = TRUE, full.names = TRUE, all.files = TRUE)
                 normalizePath(n)
         })
-        cachedir <- normalizePath(getConfig("cachedir"))
+        cachedir <- normalizePath(cache())
         exclude <- grep(cachedir, fileList, fixed = TRUE)
         fileList[-exclude]
 }
@@ -124,7 +124,7 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
-        setConfig("cachedir", cachedir)
+        cache(cachedir)
         setConfig("metadata", metadata)
         setConfig("new.plot", FALSE)
         setConfig("logfile", logfile)
@@ -150,7 +150,7 @@ cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 ################################################################################
 
 updateDBFileList <- function() {
-        cachedir <- getConfig("cachedir")
+        cachedir <- cache()
         dbfilelist <- file.path(cachedir, "dbfiles")
 
         oldlist <- if(!file.exists(dbfilelist))
@@ -162,7 +162,7 @@ updateDBFileList <- function() {
 }
 
 updateSrcFileList <- function(srcfile) {
-        cachedir <- getConfig("cachedir")
+        cachedir <- cache()
         srcfilelist <- file.path(cachedir, "srcfiles")
 
         oldlist <- if(!file.exists(srcfilelist))
@@ -251,7 +251,7 @@ runExpression <- function(expr) {
 }
 
 exprFileName <- function(expr) {
-        file.path(dbdir(getConfig("cachedir")),
+        file.path(dbdir(cache()),
                   hashExpr(expr, getConfig("history")))
 }
 
@@ -366,7 +366,7 @@ evalAndCache <- function(expr, exprFile) {
 ## Handling expressions with side effects
 
 forceEvalListFile <- function() {
-        file.path(getConfig("cachedir"), ".ForceEvalList")
+        file.path(cache(), ".ForceEvalList")
 }
 
 updateForceEvalList <- function(expr) {

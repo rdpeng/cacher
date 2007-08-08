@@ -1,13 +1,22 @@
 ################################################################################
 ## Tools for exploring the cache
 
-sourcefile <- function(srcfile = NULL) {
-        cachedir <- getConfig("cachedir")
+cache <- function(dir = NULL) {
+        if(is.null(dir))
+                getConfig("cachedir")
+        else
+                setConfig("cachedir", dir)
+}
 
+sourcefile <- function(srcfile = NULL) {
+        cachedir <- cache()
+
+        ## Get it
         if(is.null(srcfile)) {
-                sf <- readLines(file.path(cachedir, "srcfiles"))
+                sf <- getConfig("srcfile")
                 return(sf)
         }
+        ## Set it
         cache.srcfile <- file.path(srcdir(cachedir), srcfile)
 
         if(file.exists(cache.srcfile))
@@ -17,12 +26,20 @@ sourcefile <- function(srcfile = NULL) {
                               srcfile))
 }
 
+showfiles <- function() {
+        cachedir <- cache()
+        sf <- readLines(file.path(cachedir, "srcfiles"))
+        sf
+}
+
 showExpressions <- function(num, srcref) {
         tfile <- tempfile()
         con <- file(tfile, "w")
         on.exit(close(con))
 
         skip <- skipcode()
+        srcfile <- sourcefile()
+        writeLines(paste("source file:", basename(srcfile)), con)
 
         for(i in num) {
                 expr <- as.character(srcref[[i]])
@@ -46,17 +63,17 @@ showExpressions <- function(num, srcref) {
 }
 
 metafile <- function(srcfile) {
-        cachedir <- getConfig("cachedir")
+        cachedir <- cache()
         file.path(metadir(cachedir),
                   paste(basename(srcfile), "meta", sep = "."))
 }
 
 code <- function(num = NULL, full = FALSE) {
-        srcfile <- getConfig("srcfile")
+        srcfile <- sourcefile()
 
         if(is.null(srcfile))
-                stop("set 'srcfile' with 'setConfig'")
-        cachedir <- getConfig("cachedir")
+                stop("set source file with 'sourcefile'; use 'showfiles()' to see available files")
+        cachedir <- cache()
         exprList <- parse(srcfile)
 
         if(is.null(num))
@@ -72,8 +89,8 @@ code <- function(num = NULL, full = FALSE) {
 }
 
 showobjects <- function(num) {
-        cachedir <- getConfig("cachedir")
-        srcfile <- getConfig("srcfile")
+        cachedir <- cache()
+        srcfile <- sourcefile()
 
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")
@@ -86,8 +103,8 @@ showobjects <- function(num) {
 }
 
 loadcache <- function(num, env = parent.frame()) {
-        cachedir <- getConfig("cachedir")
-        srcfile <- getConfig("srcfile")
+        cachedir <- cache()
+        srcfile <- sourcefile()
         meta <- read.dcf(metafile(srcfile))
 
         if(missing(num))
@@ -104,8 +121,8 @@ loadcache <- function(num, env = parent.frame()) {
 }
 
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
-        cachedir <- getConfig("cachedir")
-        srcfile <- getConfig("srcfile")
+        cachedir <- cache()
+        srcfile <- sourcefile()
 
         if(is.null(srcfile))
                 stop("set 'srcfile' with 'setConfig'")

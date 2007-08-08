@@ -3,7 +3,7 @@
 clonecache <- function(origin, cachedir = ".cache", download.cache = FALSE) {
         ## For now, 'origin' is a URL like http://asdf.org/.cache
         mkdirs(cachedir)
-        setConfig("cachedir", cachedir)
+        cache(cachedir)
         initDownload(origin)
         writeLines(origin, file.path(cachedir, "origin"))
 
@@ -34,8 +34,7 @@ showMeter <- function(i, n) {
 }
 
 isClone <- function() {
-        cachedir <- getConfig("cachedir")
-        file.exists(file.path(cachedir, "origin"))
+        file.exists(file.path(cache(), "origin"))
 }
 
 transferCacheFile <- function(cacheFile, cachedir) {
@@ -64,7 +63,7 @@ download <- function(url, destfile, method, quiet = TRUE, mode = "w",
 }
 
 initDownload <- function(id) {
-        cachedir <- getConfig("cachedir")
+        cachedir <- cache()a
 
         message("downloading source file list")
         download(file.path(id, "srcfiles"), file.path(cachedir, "srcfiles"),

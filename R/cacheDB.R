@@ -39,7 +39,7 @@ isEmptyIndex <- function(idx) {
 }
 
 cacheLazyLoad <- function(file, envir = parent.frame()) {
-        cachedir <- getConfig("cachedir")
+        cachedir <- cache()
 
         if(!file.exists(file)) {
                 origin <- readLines(file.path(cachedir, "origin"))
