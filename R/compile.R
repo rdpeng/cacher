@@ -111,12 +111,20 @@ createLogFile <- function(cachedir, logfile, srcfile) {
 
 ################################################################################
 
-cacher <- cc <- function(srcfile, cachedir = ".cache", logfile = NULL) {
+cc <- function(expr, cachedir = ".cache", srcfile = NULL, ...) {
+        exprtext <- deparse(substitute(expr))
+
+        if(is.null(srcfile))
+                srcfile <- tempfile()
+        writeLines(exprtext, srcfile)
+        cacher(srcfile, cachedir, ...)
+}
+
+cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         exprList <- parse(srcfile, srcfile = NULL)
 
         mkdirs(cachedir)
-        metadata <- file.path(metadir(cachedir),
-                              paste(srcfile, "meta", sep = "."))
+        metadata <- metafile(srcfile)
         file.create(metadata)
         file.copy(srcfile, srcdir(cachedir))
 
@@ -176,7 +184,7 @@ updateSrcFileList <- function(srcfile) {
 writeMetadata <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
 
-        entry <- data.frame(srcfile = getConfig("srcfile"),
+        entry <- data.frame(srcfile = sourcefile(),
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
                             files = paste(getConfig("new.files"), collapse = ";"),
