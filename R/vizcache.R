@@ -17,7 +17,7 @@ sourcefile <- function(srcfile = NULL) {
                 return(sf)
         }
         ## Set it
-        cache.srcfile <- file.path(srcdir(cachedir), srcfile)
+        cache.srcfile <- file.path(srcdir(cachedir), basename(srcfile))
 
         if(file.exists(cache.srcfile))
                 setConfig("srcfile", cache.srcfile)
