@@ -35,6 +35,7 @@ cacherGridHook <- function() {
 }
 
 getFileList <- function() {
+        return(character(0))
         fileList <- suppressWarnings({
                 n <- dir(recursive = TRUE, full.names = TRUE, all.files = TRUE)
                 normalizePath(n)
@@ -133,13 +134,14 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         metadata <- metafile(srcfile)
         file.create(metadata)
         file.copy(srcfile, srcdir(cachedir))
+        srcfile <- basename(srcfile)
 
         logfile <- createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
         cache(cachedir)
-        sourcefile(srcfile)
+        setConfig("srcfile", srcfile)
         setConfig("metadata", metadata)
         setConfig("new.plot", FALSE)
         setConfig("logfile", logfile)
