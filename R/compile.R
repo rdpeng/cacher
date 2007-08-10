@@ -119,8 +119,15 @@ createLogFile <- function(cachedir, logfile, srcfile) {
 }
 
 copyFileToCache <- function(srcfile, cachedir) {
-        dest <- file.path(srcdir(cachedir), srcfile)
+        dest <- file.path(srcdir(cachedir), basename(srcfile))
 
+        if(file.exists(dest)) {
+                ## Are the contents of the two files the same?
+                checksum <- as.character(md5sum(c(srcfile, dest)))
+
+                if(identical(checksum[1], checksum[2]))
+                        return(dest)
+        }
         i <- 0
         while(file.exists(dest)) 
                 dest <- paste(dest, i + 1, sep = ".")
