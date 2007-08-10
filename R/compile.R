@@ -178,6 +178,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         updateSrcFileList(srccopy)
 
         updateDBFileList()
+        setConfig("srcfile", basename(srccopy))        
 }
 
 ################################################################################
