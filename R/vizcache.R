@@ -14,7 +14,7 @@ sourcefile <- function(srcfile = NULL) {
         ## Get it
         if(is.null(srcfile)) {
                 sf <- getConfig("srcfile")
-                return(sf)
+                return(basename(sf))
         }
         ## Set it
         cache.srcfile <- file.path(srcdir(cachedir), basename(srcfile))
@@ -73,8 +73,7 @@ code <- function(num = NULL, full = FALSE) {
 
         if(is.null(srcfile))
                 stop("set source file with 'sourcefile'; use 'showfiles()' to see available files")
-        cachedir <- cache()
-        exprList <- parse(srcfile)
+        exprList <- parse(file.path(srcdir(cache()), srcfile))
 
         if(is.null(num))
                 num <- seq_len(length(exprList))
