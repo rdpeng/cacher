@@ -57,6 +57,8 @@ unsetHookFunctions <- function() {
         setHook("grid.newpage", getConfig("oldGridHook"), "replace")
 }
 
+################################################################################
+
 setConfig <- function(name, value) {
         allowed <- c("srcfile", "cachedir", "oldPlotHook", "oldGridHook",
                      "new.plot", "metadata", "logfile", "fileList",
@@ -109,11 +111,11 @@ createLogFile <- function(cachedir, logfile, srcfile) {
                                      paste(basename(srcfile), "log", sep="."))
                 file.create(logfile)
         }
-        if(is.na(logfile))
+        else if(is.na(logfile))
                 logfile <- stderr()
         else
                 file.create(logfile)
-        logfile
+        setConfig("logfile", logfile)
 }
 
 ################################################################################
@@ -135,15 +137,13 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         file.create(metadata)
         file.copy(srcfile, srcdir(cachedir))  # for later use
 
-        logfile <- createLogFile(cachedir, logfile, srcfile)
+        createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
         cache(cachedir)
-        setConfig("srcfile", srcfile)
         setConfig("metadata", metadata)
         setConfig("new.plot", FALSE)
-        setConfig("logfile", logfile)
         setConfig("fileList", getFileList())
 
         initForceEvalList()
@@ -156,7 +156,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 setConfig("history", exprList[seq_len(i - 1)])
 
                 runExpression(expr)
-                writeMetadata(expr)
+                writeMetadata(expr, srcfile)
         }
         updateSrcFileList(srcfile)
         updateDBFileList()
@@ -188,10 +188,10 @@ updateSrcFileList <- function(srcfile) {
         writeLines(newlist, srcfilelist)
 }
 
-writeMetadata <- function(expr) {
+writeMetadata <- function(expr, srcfile) {
         exprWidth <- getConfig("exprDeparseWidth")
 
-        entry <- data.frame(srcfile = getConfig("srcfile"),
+        entry <- data.frame(srcfile = srcfile,
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
                             files = paste(getConfig("new.files"), collapse = ";"),
