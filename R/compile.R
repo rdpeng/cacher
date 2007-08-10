@@ -106,7 +106,7 @@ srcdir <- function(cachedir) {
 createLogFile <- function(cachedir, logfile, srcfile) {
         if(is.null(logfile)) {
                 logfile <- file.path(logdir(cachedir),
-                                     paste(srcfile, "log", sep="."))
+                                     paste(basename(srcfile), "log", sep="."))
                 file.create(logfile)
         }
         if(is.na(logfile))
@@ -133,8 +133,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         mkdirs(cachedir)
         metadata <- metafile(srcfile)
         file.create(metadata)
-        file.copy(srcfile, srcdir(cachedir))
-        srcfile <- basename(srcfile)
+        file.copy(srcfile, srcdir(cachedir))  # for later use
 
         logfile <- createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
@@ -185,14 +184,14 @@ updateSrcFileList <- function(srcfile) {
                 character(0)
         else
                 readLines(srcfilelist)
-        newlist <- unique(c(oldlist, srcfile))
+        newlist <- unique(c(oldlist, basename(srcfile)))
         writeLines(newlist, srcfilelist)
 }
 
 writeMetadata <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
 
-        entry <- data.frame(srcfile = sourcefile(),
+        entry <- data.frame(srcfile = getConfig("srcfile"),
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
                             files = paste(getConfig("new.files"), collapse = ";"),
