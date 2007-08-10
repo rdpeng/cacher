@@ -174,11 +174,11 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 writeMetadata(expr, srcfile)
         }
         ## Copy to cache for later use
-        srccopy <- copyFileToCache(srcfile, cachedir)
-        updateSrcFileList(srccopy)
+        srcfile.cache <- copyFileToCache(srcfile, cachedir)
+        updateSrcFileList(srcfile.cache)
 
         updateDBFileList()
-        setConfig("srcfile", basename(srccopy))        
+        setConfig("srcfile", srcfile.cache)
 }
 
 ################################################################################
