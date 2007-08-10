@@ -118,6 +118,16 @@ createLogFile <- function(cachedir, logfile, srcfile) {
         setConfig("logfile", logfile)
 }
 
+copyFileToCache <- function(srcfile, cachedir) {
+        dest <- file.path(srcdir(cachedir), srcfile)
+
+        i <- 0
+        while(file.exists(dest)) 
+                dest <- paste(dest, i + 1, sep = ".")
+        file.copy(srcfile, dest)
+        dest
+}
+
 ################################################################################
 
 cc <- function(expr, cachedir = ".cache", srcfile = NULL, ...) {
@@ -135,8 +145,6 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         mkdirs(cachedir)
         file.create(metafile(srcfile))
         setConfig("metadata", metafile(srcfile))
-
-        file.copy(srcfile, srcdir(cachedir))  # for later use
 
         createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
@@ -158,7 +166,10 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 runExpression(expr)
                 writeMetadata(expr, srcfile)
         }
-        updateSrcFileList(srcfile)
+        ## Copy to cache for later use
+        srccopy <- copyFileToCache(srcfile, cachedir)
+        updateSrcFileList(srccopy)
+
         updateDBFileList()
 }
 
