@@ -133,8 +133,9 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         exprList <- parse(srcfile, srcfile = NULL)
 
         mkdirs(cachedir)
-        metadata <- metafile(srcfile)
-        file.create(metadata)
+        file.create(metafile(srcfile))
+        setConfig("metadata", metafile(srcfile))
+
         file.copy(srcfile, srcdir(cachedir))  # for later use
 
         createLogFile(cachedir, logfile, srcfile)
@@ -142,7 +143,6 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         on.exit(unsetHookFunctions())
 
         cache(cachedir)
-        setConfig("metadata", metadata)
         setConfig("new.plot", FALSE)
         setConfig("fileList", getFileList())
 
