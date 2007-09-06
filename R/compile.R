@@ -34,17 +34,6 @@ cacherGridHook <- function() {
         setConfig("new.plot", TRUE)
 }
 
-getFileList <- function() {
-        return(character(0))
-        fileList <- suppressWarnings({
-                n <- dir(recursive = TRUE, full.names = TRUE, all.files = TRUE)
-                normalizePath(n)
-        })
-        cachedir <- normalizePath(cache())
-        exclude <- grep(cachedir, fileList, fixed = TRUE)
-        fileList[-exclude]
-}
-
 setHookFunctions <- function() {
         setConfig("oldPlotHook", getHook("plot.new"))
         setConfig("oldGridHook", getHook("grid.newpage"))
@@ -61,7 +50,7 @@ unsetHookFunctions <- function() {
 
 setConfig <- function(name, value) {
         allowed <- c("srcfile", "cachedir", "oldPlotHook", "oldGridHook",
-                     "new.plot", "metadata", "logfile", "fileList",
+                     "new.plot", "metadata", "logfile",
                      "new.files", "new.objects", "skipcode",
                      "exprDeparseWidth", "history", "archive")
         if(!(name %in% allowed))
@@ -159,7 +148,6 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
         cache(cachedir)
         setConfig("new.plot", FALSE)
-        setConfig("fileList", getFileList())
 
         initForceEvalList()
 
@@ -227,22 +215,6 @@ isCached <- function(exprFile) {
         file.exists(exprFile)
 }
 
-checkNewFiles <- function() {
-        current <- getFileList()
-        newfiles <- setdiff(current, getConfig("fileList"))
-        files.new <- length(newfiles) > 0
-
-        if(files.new) {
-                logMessage("  expression created file(s) ",
-                           paste(newfiles, collapse = ", "))
-                setConfig("fileList", c(getConfig("fileList"), newfiles))
-                setConfig("new.files", newfiles)
-        }
-        else
-                setConfig("new.files", "")
-        files.new
-}
-
 checkNewPlot <- function() {
         if(newplot <- getConfig("new.plot"))
                 setConfig("new.plot", FALSE)
@@ -268,10 +240,9 @@ runExpression <- function(expr) {
                 logMessage("  eval expr and cache")
                 keys <- evalAndCache(expr, exprFile)
 
-                newfiles <- checkNewFiles()
                 newplot <- checkNewPlot()
 
-                forceEval <- (length(keys) == 0 || newplot || newfiles)
+                forceEval <- (length(keys) == 0 || newplot)
 
                 if(forceEval && !checkForceEvalList(expr)) {
                         logMessage("  expression has side effect: ", hash(expr))
