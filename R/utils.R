@@ -9,16 +9,20 @@ package <- function(cachedir) {
         setwd(dirname(cachedir))        
         on.exit(setwd(cwd))
         
-        cmd <- paste("zip -r", name, basename(cachedir))
+        cmd <- paste("zip -r -X", name, basename(cachedir))
         out <- system(cmd, intern = TRUE)
         
         checksum <- md5sum(name)
         newname <- paste("./cpkg-", checksum, ".zip", sep = "")
         message(gettextf("creating package '%s'", basename(newname)))
-        status <- file.copy(name, newname)
+
+        if(file.exists(newname))
+                warning(gettextf("existing package file '%s' overwritten",
+                                 newname))
+        status <- file.copy(name, newname, overwrite = TRUE)
 
         if(!status)
-                warning("problem creating package file")
+                warning("problem copying package file")
         invisible(out)
 }
 
