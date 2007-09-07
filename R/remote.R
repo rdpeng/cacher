@@ -7,7 +7,7 @@ clonecache <- function(origin, cachedir = ".cache", all.files = FALSE, id = NULL
         if(!is.null(id))
                 origin <- packageArchive(id)
         mkdirs(cachedir)
-        cache(cachedir)
+        setConfig("cachedir", cachedir)
         initDownload(origin)
         writeLines(origin, file.path(cachedir, "origin"))
 
@@ -24,7 +24,8 @@ packageArchive <- function(id) {
         file.path(baseurl, "packages", prefix, id, ".cache")
 }
 
-downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE, origin = NULL) {
+downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
+                            origin = NULL) {
         message("downloading cache database files")
         dbfiles <- readLines(file.path(cachedir, "dbfiles"))
 

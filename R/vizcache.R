@@ -1,11 +1,8 @@
 ################################################################################
 ## Tools for exploring the cache
 
-cache <- function(dir = NULL) {
-        if(is.null(dir))
-                getConfig("cachedir")
-        else
-                setConfig("cachedir", dir)
+cache <- function() {
+        getConfig("cachedir")
 }
 
 sourcefile <- function(srcfile = NULL) {

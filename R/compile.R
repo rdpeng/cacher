@@ -152,7 +152,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         setHookFunctions()
         on.exit(unsetHookFunctions())
 
-        cache(cachedir)
+        setConfig("cachedir", cachedir)
         setConfig("new.plot", FALSE)
 
         initForceEvalList()
