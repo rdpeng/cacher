@@ -107,20 +107,26 @@ createLogFile <- function(cachedir, logfile, srcfile) {
         setConfig("logfile", logfile)
 }
 
+identicalFiles <- function(x, y) {
+        ## Are the contents of the two files the same?
+        checksum <- as.character(md5sum(c(x, y)))
+        identical(checksum[1], checksum[2])
+}
+
 copyFileToCache <- function(srcfile, cachedir) {
         dest <- file.path(srcdir(cachedir), basename(srcfile))
-
-        if(file.exists(dest)) {
-                ## Are the contents of the two files the same?
-                checksum <- as.character(md5sum(c(srcfile, dest)))
-
-                if(identical(checksum[1], checksum[2]))
-                        return(dest)
-        }
+        
+        if(file.exists(dest) && identicalFiles(srcfile, dest))
+                return(dest)
         i <- 0
+        dest0 <- dest
+        
         while(file.exists(dest)) 
-                dest <- paste(dest, i + 1, sep = ".")
-        file.copy(srcfile, dest)
+                dest <- paste(dest0, i + 1, sep = ".")
+        status <- file.copy(srcfile, dest)
+
+        if(!status)
+                warning("unable to copy source file to cache")
         dest
 }
 
