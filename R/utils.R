@@ -1,3 +1,13 @@
+## Package files are of the form 'cpkg-<32 char checksum>.zip'.  In
+## order to extract the checksum/ID from the file name, we need to
+## substring starting at 6 and ending at 6 + 32 - 1.  This is only
+## true because we use MD5 checksums (it would be different if we used
+## SHA1 for example).
+
+CHECKSUM_BEGIN <- 6
+CHECKSUM_END <- 6 + 32 - 1
+
+
 package <- function(cachedir) {
         if(missing(cachedir))
                 cachedir <- getConfig("cachedir")
@@ -27,40 +37,3 @@ package <- function(cachedir) {
 }
 
 
-
-################################################################################
-
-## For administrators only
-
-pkgunzip <- function(filename, pkgdir = "~/projects/rr-website/html/packages") {
-        tdir <- tempfile()
-        message("creating temp directory ", tdir)
-
-        if(!dir.create(tdir))
-                stop("unable to create temporary directory")
-
-        message("copying package to temp directory")
-        file.copy(filename, tdir)
-
-        ## Get ID from filename
-        id <- substring(filename, 6, 6 + 32 - 1)
-
-        cwd <- getwd()
-        setwd(tdir)
-        on.exit(setwd(cwd))
-
-        if(length(dir()) != 1)
-                stop("temp directory should only contain one file")
-        message("unzipping package file")
-        system(paste("unzip -q", basename(filename)))
-        newdir <- setdiff(dir(all.files = TRUE), c(filename, ".", ".."))
-        newdir <- paste(newdir, "/", sep = "")
-
-        destdir <- file.path(pkgdir, getIDdir(id))
-        message("creating destination directory ", destdir)
-        dir.create(destdir, recursive = TRUE, showWarnings = FALSE)
-
-        message("rsyncing files")
-        cmd <- paste("rsync -a", newdir, destdir)
-        system(cmd)
-}

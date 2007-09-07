@@ -15,8 +15,20 @@ clonecache <- function(origin, cachedir = ".cache", all.files = FALSE, id = NULL
                 downloadCacheDB(cachedir, FALSE, origin)
 }
 
+
+## To create the directory for the archived cache, we take the first 4
+## chars of the MD4 checksum as the 'prefix' directory and the
+## remaining chars as the 'suffix' or package directory.  The package
+## contents are stored in <baseurl>/<prefix>/<suffix>.  This prevents
+## having a single directory with a lot of files.
+
+PREFIX_BEGIN <- 1
+PREFIX_END <- 4
+SUFFIX_BEGIN <- 5
+
 getIDdir <- function(id) {
-        file.path(substring(id, 1, 4), substring(id, 5))
+        file.path(substring(id, PREFIX_BEGIN, PREFIX_END),
+                  substring(id, SUFFIX_BEGIN))
 }
 
 packageArchive <- function(id) {
