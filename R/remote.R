@@ -15,14 +15,16 @@ clonecache <- function(origin, cachedir = ".cache", all.files = FALSE, id = NULL
                 downloadCacheDB(cachedir, FALSE, origin)
 }
 
+getIDdir <- function(id) {
+        file.path(substring(id, 1, 4), substring(id, 5))
+}
+
 packageArchive <- function(id) {
         baseurl <- getConfig("archive")
-
+        
         if(is.null(baseurl))
                 stop("archive URL not set")
-        prefix <- substring(id, 1, 4)
-        suffix <- substring(id, 5)
-        file.path(baseurl, "packages", prefix, suffix)
+        file.path(baseurl, "packages", getIDdir(id))
 }
 
 downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
