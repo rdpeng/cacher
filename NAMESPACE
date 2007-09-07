@@ -14,7 +14,8 @@ export(
        "package",
        "clonecache",
        "packageArchive",
-       "downloadCacheDB"
+       "downloadCacheDB",
+       "showcode"
        )
 
 import(digest)

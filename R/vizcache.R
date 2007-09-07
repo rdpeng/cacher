@@ -72,6 +72,11 @@ metafile <- function(srcfile) {
                   paste(basename(srcfile), "meta", sep = "."))
 }
 
+showcode <- function() {
+        srcfile <- getConfig("srcfile")
+        file.show(srcfile)
+}
+
 code <- function(num = NULL, full = FALSE) {
         srcfile <- sourcefile()
 
