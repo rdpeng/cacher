@@ -18,6 +18,6 @@ export(
        "showcode"
        )
 
-import(digest)
+importFrom(digest, "digest")
 import(utils)
-import(tools)
+importFrom(tools, "md5sum")
