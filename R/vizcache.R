@@ -25,6 +25,7 @@ sourcefile <- function(srcfile = NULL) {
         else
                 stop(gettextf("source file '%s' not in cache directory",
                               srcfile))
+        invisible(basename(cache.srcfile))
 }
 
 showfiles <- function() {
