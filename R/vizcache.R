@@ -44,7 +44,7 @@ showExpressions <- function(num, srcref) {
         on.exit(close(con))
 
         skip <- skipcode()
-        srcfile <- sourcefile()
+        srcfile <- getConfig("srcfile")
         writeLines(paste("source file:", basename(srcfile)), con)
 
         for(i in num) {
@@ -80,11 +80,11 @@ showcode <- function() {
 }
 
 code <- function(num = NULL, full = FALSE) {
-        srcfile <- sourcefile()
+        srcfile <- getConfig("srcfile")
 
         if(is.null(srcfile))
                 stop("set source file with 'sourcefile'; use 'showfiles()' to see available files")
-        exprList <- parse(file.path(srcdir(cache()), srcfile))
+        exprList <- parse(srcfile)
 
         if(is.null(num))
                 num <- seq_len(length(exprList))
@@ -100,7 +100,7 @@ code <- function(num = NULL, full = FALSE) {
 
 showobjects <- function(num) {
         cachedir <- cache()
-        srcfile <- sourcefile()
+        srcfile <- getConfig("srcfile")
 
         if(is.null(srcfile))
                 stop("set source file with 'sourcefile'")
@@ -114,7 +114,7 @@ showobjects <- function(num) {
 
 loadcache <- function(num, env = parent.frame()) {
         cachedir <- cache()
-        srcfile <- sourcefile()
+        srcfile <- getConfig("srcfile")
 
         if(is.null(srcfile))
                 stop("set source file with 'sourcefile'")
@@ -135,7 +135,7 @@ loadcache <- function(num, env = parent.frame()) {
 
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         cachedir <- cache()
-        srcfile <- sourcefile()
+        srcfile <- getConfig("srcfile")
 
         if(is.null(srcfile))
                 stop("set source file with 'sourcefile'")
