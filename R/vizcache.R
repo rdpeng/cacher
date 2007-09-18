@@ -30,7 +30,11 @@ sourcefile <- function(srcfile = NULL) {
 
 showfiles <- function() {
         cachedir <- cache()
-        sf <- readLines(file.path(cachedir, "srcfiles"))
+        sf <- tryCatch({
+                readLines(file.path(cachedir, "srcfiles"))
+        }, condition = function(cond) {
+                NULL
+        })
         sf
 }
 
