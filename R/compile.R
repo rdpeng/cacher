@@ -158,6 +158,11 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         setConfig("cachedir", cachedir)
         setConfig("new.plot", FALSE)
 
+        ## Copy to cache for later use
+        srcfile.cache <- copyFileToCache(srcfile, cachedir)
+        sourcefile(srcfile.cache)
+        updateSrcFileList(srcfile.cache)
+
         initForceEvalList()
 
         for(i in seq_along(exprList)) {
@@ -170,12 +175,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 runExpression(expr)
                 writeMetadata(expr, srcfile)
         }
-        ## Copy to cache for later use
-        srcfile.cache <- copyFileToCache(srcfile, cachedir)
-        updateSrcFileList(srcfile.cache)
-
         updateDBFileList()
-        sourcefile(srcfile.cache)
 }
 
 ################################################################################
@@ -274,7 +274,8 @@ hash <- function(object) {
 }
 
 hashExpr <- function(expr, history) {
-        obj <- list(expr, history)
+        srcfile <- sourcefile()
+        obj <- list(expr, history, srcfile)
         hash(obj)
 }
 
