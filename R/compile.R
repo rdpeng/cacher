@@ -133,10 +133,13 @@ copyFileToCache <- function(srcfile, cachedir) {
 ################################################################################
 
 cc <- function(expr, cachedir = ".cache", srcfile = NULL, ...) {
-        exprtext <- deparse(substitute(expr))
+        if(!identical(globalenv(), parent.frame())) 
+                stop("'cc' must be called from the global environment")
+        subexpr <- substitute(expr)
+        exprtext <- deparse(subexpr)
 
         if(is.null(srcfile))
-                srcfile <- tempfile()
+                srcfile <- file.path(tempdir(), hash(subexpr))
         writeLines(exprtext, srcfile)
         cacher(srcfile, cachedir, ...)
 }
