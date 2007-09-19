@@ -66,7 +66,24 @@ getConfig <- function(name) {
         })
 }
 
+setHistory <- function(expr, value) {
+        key <- hash(expr)
+        assign(key, value, .history, inherits = FALSE)
+}
+
+getHistory <- function(expr) {
+        key <- hash(expr)
+        
+        tryCatch({
+                get(key, .history, inherits = FALSE)
+        }, error = function(e) {
+                NULL
+        })
+}
+
 .config <- new.env(parent = emptyenv())
+
+.history <- new.env(parent = emptyenv())
 
 ################################################################################
 
@@ -170,7 +187,8 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 exprStr <- deparse(expr[[1]],width=getConfig("exprDeparseWidth"))[1]
                 msg <- sprintf("%d: %s", i, exprStr)
                 logMessage(msg)
-                setConfig("history", exprList[seq_len(i - 1)])
+                ## setConfig("history", exprList[seq_len(i - 1)])
+                setHistory(expr, exprList[seq_len(i - 1)])
 
                 runExpression(expr)
                 writeMetadata(expr, srcfile)
@@ -249,9 +267,7 @@ runExpression <- function(expr) {
                 logMessage("  eval expr and cache")
                 keys <- evalAndCache(expr, exprFile)
 
-                newplot <- checkNewPlot()
-
-                forceEval <- (length(keys) == 0 || newplot)
+                forceEval <- (length(keys) == 0 || checkNewPlot())
 
                 if(forceEval && !checkForceEvalList(expr)) {
                         logMessage("  expression has side effect: ", hash(expr))
@@ -265,8 +281,7 @@ runExpression <- function(expr) {
 }
 
 exprFileName <- function(expr) {
-        file.path(dbdir(cache()),
-                  hashExpr(expr, getConfig("history")))
+        file.path(dbdir(cache()), hashExpr(expr, getHistory(expr)))
 }
 
 hash <- function(object) {
