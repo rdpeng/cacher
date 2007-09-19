@@ -36,7 +36,7 @@ packageArchive <- function(id) {
         
         if(is.null(baseurl))
                 stop("archive URL not set")
-        file.path(baseurl, "packages", getIDdir(id))
+        file.path(baseurl, "cpkg", getIDdir(id))
 }
 
 downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
