@@ -141,23 +141,28 @@ loadcache <- function(num, env = parent.frame()) {
 }
 
 checkobjects <- function(obj, env, checkenv) {
+        if(length(obj) == 0) {
+                message("-- no objects to check, OK")
+                return(NULL)
+        }
         test <- logical(length(obj))
 
-        if(length(obj) == 0)
-                message("-- no objects to check")
         for(j in seq_along(obj)) {
                 test[j] <- isTRUE(all.equal(get(obj[j], env),
                                             get(obj[j], checkenv)))
         }
         if(all(test))
-                message("-- OK")
+                message(sprintf(ngettext(length(obj),
+                                         "-- object %s OK",
+                                         "-- objects %s OK"),
+                                paste(sQuote(obj), collapse = ", ")))
         else {
                 message("-- FAILED")
                 failed <- which(!test)
                 message(sprintf(ngettext(sum(failed),
                                          "-- object %s not verified",
                                          "-- objects %s not verified"),
-                                paste(obj[failed], collapse = ", ")))
+                                paste(sQuote(obj[failed]), collapse = ", ")))
         }
 }
 
