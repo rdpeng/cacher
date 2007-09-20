@@ -144,12 +144,21 @@ checkobjects <- function(obj, env, checkenv) {
         test <- logical(length(obj))
 
         if(length(obj) == 0)
-                message("no objects to check, ", appendLF = FALSE)
+                message("-- no objects to check", appendLF = FALSE)
         for(j in seq_along(obj)) {
                 test[j] <- isTRUE(all.equal(get(obj[j], env),
                                             get(obj[j], checkenv)))
         }
-        test
+        if(all(test))
+                message("-- OK")
+        else {
+                message("-- FAILED")
+                failed <- which(!test)
+                message(sprintf(ngettext(sum(failed),
+                                         "-- object %s not verified",
+                                         "-- objects %s not verified")
+                                paste(obj[failed], collapse = ", ")))
+        }
 }
 
 checkcode <- function(num, env = parent.frame()) {
@@ -167,7 +176,7 @@ checkcode <- function(num, env = parent.frame()) {
         
         for(i in num) {
                 expr <- exprList[i]
-                message("checking expression ", i, ": ", appendLF = FALSE)
+                message("checking expression ", i, "")
                 
                 status <- tryCatch({
                         eval(expr, env, globalenv())
@@ -184,17 +193,7 @@ checkcode <- function(num, env = parent.frame()) {
                 if(!inherits(status, "condition")) {
                         obj <- strsplit(meta[i, "objects"], ";",
                                         fixed = TRUE)[[1]]
-                        test <- checkobjects(obj, env, checkenv)
-
-                        if(all(test))
-                                message("OK")
-                        else {
-                                message("FAILED")
-                                failed <- which(!test)
-                                message(gettextf("objects %s not verified",
-                                                 paste(obj[failed],
-                                                       collapse = ", ")))
-                        }
+                        checkobjects(obj, env, checkenv)
                 }
         }
 }
