@@ -142,7 +142,9 @@ loadcache <- function(num, env = parent.frame()) {
 
 checkobjects <- function(obj, env, checkenv) {
         test <- logical(length(obj))
-        
+
+        if(length(obj) == 0)
+                message("no objects to check, ", appendLF = FALSE)
         for(j in seq_along(obj)) {
                 test[j] <- isTRUE(all.equal(get(obj[j], env),
                                             get(obj[j], checkenv)))
