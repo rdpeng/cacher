@@ -36,4 +36,3 @@ package <- function(cachedir) {
         invisible(out)
 }
 
-
