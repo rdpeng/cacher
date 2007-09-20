@@ -258,6 +258,7 @@ runExpression <- function(expr) {
                 return(NULL)
         }
         exprFile <- exprFileName(expr)
+        forceEval <- FALSE
 
         if(!isCached(exprFile)) {
                 logMessage("  eval expr and cache")
@@ -271,7 +272,8 @@ runExpression <- function(expr) {
                         updateForceEvalList(expr)
                 }
         }
-        logMessage("  -- loading expr from cache")
+        if(!forceEval)
+                logMessage("  -- loading expr from cache")
         objects <- cacheLazyLoad(exprFile, globalenv())
         setConfig("new.objects", objects)
         invisible(objects)
