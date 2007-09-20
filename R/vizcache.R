@@ -144,7 +144,7 @@ checkobjects <- function(obj, env, checkenv) {
         test <- logical(length(obj))
 
         if(length(obj) == 0)
-                message("-- no objects to check", appendLF = FALSE)
+                message("-- no objects to check")
         for(j in seq_along(obj)) {
                 test[j] <- isTRUE(all.equal(get(obj[j], env),
                                             get(obj[j], checkenv)))
@@ -156,7 +156,7 @@ checkobjects <- function(obj, env, checkenv) {
                 failed <- which(!test)
                 message(sprintf(ngettext(sum(failed),
                                          "-- object %s not verified",
-                                         "-- objects %s not verified")
+                                         "-- objects %s not verified"),
                                 paste(obj[failed], collapse = ", ")))
         }
 }
