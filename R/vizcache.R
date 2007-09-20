@@ -138,6 +138,55 @@ loadcache <- function(num, env = parent.frame()) {
         invisible(unique(unlist(out)))
 }
 
+checkcode <- function(num, env = parent.frame()) {
+        cachedir <- cache()
+        srcfile <- getConfig("srcfile")
+        checkSourceFile(srcfile)
+
+        meta <- read.dcf(metafile(srcfile))
+        forceEval <- as.logical(as.numeric(meta[, "forceEval"]))
+        exprList <- parse(srcfile)
+
+        if(missing(num))
+                num <- seq_len(nrow(meta))
+        checkenv <- new.env(parent = emptyenv())
+        loadcache(num, checkenv)
+        
+        for(i in num) {
+                expr <- exprList[i]
+                obj <- strsplit(meta[i, "objects"], ";", fixed = TRUE)[[1]]
+                message("evaluating expression ", i)
+
+                tryCatch({
+                        eval(expr, env, globalenv())
+                }, error = function(err) {
+                        message("ERROR: unable to evaluate expression")
+                        message(conditionMessage(err))
+
+                        if(!forceEval[i]) {
+                                message("-- loading cache for expression ", i)
+                                loadcache(i, env)
+                        }
+                })
+                message("checking expression ", i, ": ", appendLF = FALSE)
+                test <- logical(length(obj))
+                
+                for(j in seq_along(obj)) {
+                        test[j] <- isTRUE(all.equal(get(obj[j], env),
+                                                    get(obj[j], checkenv)))
+                }
+                if(all(test))
+                        message("OK")
+                else {
+                        message("FAILED")
+                        failed <- which(!test)
+                        message(gettextf("objects %s not verified",
+                                         paste(obj[failed], collapse = ", ")))
+                }
+        }
+}
+
+
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         cachedir <- cache()
         srcfile <- getConfig("srcfile")
