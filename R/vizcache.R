@@ -79,11 +79,18 @@ showcode <- function() {
         file.show(srcfile)
 }
 
+checkSourceFile <- function(srcfile) {
+        if(is.null(srcfile) && length(showfiles()) == 1)
+                sourcefile(showfiles())
+        else
+                stop("set source file with 'sourcefile'; ",
+                     "use 'showfiles()' to see available files")
+}
+
 code <- function(num = NULL, full = FALSE) {
         srcfile <- getConfig("srcfile")
-
-        if(is.null(srcfile))
-                stop("set source file with 'sourcefile'; use 'showfiles()' to see available files")
+        checkSourceFile(srcfile)
+                
         exprList <- parse(srcfile)
 
         if(is.null(num))
@@ -101,9 +108,8 @@ code <- function(num = NULL, full = FALSE) {
 showobjects <- function(num) {
         cachedir <- cache()
         srcfile <- getConfig("srcfile")
+        checkSourceFile(srcfile)
 
-        if(is.null(srcfile))
-                stop("set source file with 'sourcefile'")
         meta <- read.dcf(metafile(srcfile))
 
         if(missing(num))
@@ -115,9 +121,8 @@ showobjects <- function(num) {
 loadcache <- function(num, env = parent.frame()) {
         cachedir <- cache()
         srcfile <- getConfig("srcfile")
-
-        if(is.null(srcfile))
-                stop("set source file with 'sourcefile'")
+        checkSourceFile(srcfile)
+        
         meta <- read.dcf(metafile(srcfile))
 
         if(missing(num))
@@ -136,12 +141,14 @@ loadcache <- function(num, env = parent.frame()) {
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         cachedir <- cache()
         srcfile <- getConfig("srcfile")
-
-        if(is.null(srcfile))
-                stop("set source file with 'sourcefile'")
+        checkSourceFile(srcfile)
+        
         meta <- read.dcf(metafile(srcfile))
         exprList <- parse(srcfile)
         forceEval <- as.logical(as.numeric(meta[, "forceEval"]))
+
+        if(missing(num))
+                num <- seq_len(nrow(meta))
         skip <- skipcode()
 
         if(is.null(skip))
