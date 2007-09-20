@@ -263,7 +263,7 @@ runExpression <- function(expr) {
                 logMessage("  eval expr and cache")
                 keys <- evalAndCache(expr, exprFile)
 
-                newplot <- checkNewPlot()
+                new.plot <- checkNewPlot()
                 forceEval <- (length(keys) == 0 || new.plot)
 
                 if(forceEval && !checkForceEvalList(expr)) {
