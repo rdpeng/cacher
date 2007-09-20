@@ -263,7 +263,8 @@ runExpression <- function(expr) {
                 logMessage("  eval expr and cache")
                 keys <- evalAndCache(expr, exprFile)
 
-                forceEval <- (length(keys) == 0 || checkNewPlot())
+                newplot <- checkNewPlot()
+                forceEval <- (length(keys) == 0 || new.plot)
 
                 if(forceEval && !checkForceEvalList(expr)) {
                         logMessage("  expression has side effect: ", hash(expr))
