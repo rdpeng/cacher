@@ -140,6 +140,16 @@ loadcache <- function(num, env = parent.frame()) {
         invisible(unique(unlist(out)))
 }
 
+checkobjects <- function(obj, env, checkenv) {
+        test <- logical(length(obj))
+        
+        for(j in seq_along(obj)) {
+                test[j] <- isTRUE(all.equal(get(obj[j], env),
+                                            get(obj[j], checkenv)))
+        }
+        test
+}
+
 checkcode <- function(num, env = parent.frame()) {
         cachedir <- cache()
         srcfile <- checkSourceFile()
@@ -155,10 +165,9 @@ checkcode <- function(num, env = parent.frame()) {
         
         for(i in num) {
                 expr <- exprList[i]
-                obj <- strsplit(meta[i, "objects"], ";", fixed = TRUE)[[1]]
                 message("checking expression ", i, ": ", appendLF = FALSE)
                 
-                tryCatch({
+                status <- tryCatch({
                         eval(expr, env, globalenv())
                 }, error = function(err) {
                         message("\nERROR: unable to evaluate expression")
@@ -168,20 +177,22 @@ checkcode <- function(num, env = parent.frame()) {
                                 message("-- loading cache for expression ", i)
                                 loadcache(i, env)
                         }
+                        err
                 })
-                test <- logical(length(obj))
-                
-                for(j in seq_along(obj)) {
-                        test[j] <- isTRUE(all.equal(get(obj[j], env),
-                                                    get(obj[j], checkenv)))
-                }
-                if(all(test))
-                        message("OK")
-                else {
-                        message("FAILED")
-                        failed <- which(!test)
-                        message(gettextf("objects %s not verified",
-                                         paste(obj[failed], collapse = ", ")))
+                if(!inherits(status, "condition")) {
+                        obj <- strsplit(meta[i, "objects"], ";",
+                                        fixed = TRUE)[[1]]
+                        test <- checkobjects(obj, env, checkenv)
+
+                        if(all(test))
+                                message("OK")
+                        else {
+                                message("FAILED")
+                                failed <- which(!test)
+                                message(gettextf("objects %s not verified",
+                                                 paste(obj[failed],
+                                                       collapse = ", ")))
+                        }
                 }
         }
 }
