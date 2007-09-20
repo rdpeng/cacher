@@ -93,23 +93,14 @@ mkdirs <- function(cachedir) {
         dir.create(srcdir(cachedir), showWarnings = FALSE, recursive = TRUE)
         dir.create(logdir(cachedir), showWarnings = FALSE, recursive = TRUE)
         dir.create(metadir(cachedir), showWarnings = FALSE, recursive = TRUE)
+        dir.create(tagdir(cachedir), showWarnings = FALSE, recursive = TRUE)
 }
 
-metadir <- function(cachedir) {
-        file.path(cachedir, "meta")
-}
-
-logdir <- function(cachedir) {
-        file.path(cachedir, "log")
-}
-
-dbdir <- function(cachedir) {
-        file.path(cachedir, "db")
-}
-
-srcdir <- function(cachedir) {
-        file.path(cachedir, "src")
-}
+tagdir <- function(cachedir) file.path(cachedir, "tag")
+metadir <- function(cachedir) file.path(cachedir, "meta")
+logdir <- function(cachedir) file.path(cachedir, "log")
+dbdir <- function(cachedir) file.path(cachedir, "db")
+srcdir <- function(cachedir) file.path(cachedir, "src")
 
 createLogFile <- function(cachedir, logfile, srcfile) {
         if(is.null(logfile)) {
@@ -174,6 +165,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
         setConfig("cachedir", cachedir)
         setConfig("new.plot", FALSE)
+        setConfig("expr.tag", "")
 
         ## Copy to cache for later use
         srcfile.cache <- copyFileToCache(srcfile, cachedir)
@@ -224,7 +216,7 @@ updateSrcFileList <- function(srcfile) {
 
 writeMetadata <- function(expr, srcfile) {
         exprWidth <- getConfig("exprDeparseWidth")
-
+        
         entry <- data.frame(srcfile = srcfile,
                             expr = deparse(expr[[1]], width = exprWidth)[1],
                             objects = paste(getConfig("new.objects"),collapse=";"),
@@ -232,7 +224,11 @@ writeMetadata <- function(expr, srcfile) {
                             exprID = basename(exprFileName(expr)),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)),
+                            tag = getConfig("expr.tag"),
                             time = Sys.time())
+        if(nchar(getConfig("expr.tag"), "chars") > 0)
+                setConfig("expr.tag", "")
+        
         write.dcf(entry, file = getConfig("metadata"), append = TRUE,
                   width = 5000)
         invisible(entry)
