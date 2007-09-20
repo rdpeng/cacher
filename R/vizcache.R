@@ -79,18 +79,22 @@ showcode <- function() {
         file.show(srcfile)
 }
 
-checkSourceFile <- function(srcfile) {
-        if(is.null(srcfile) && length(showfiles()) == 1)
+checkSourceFile <- function() {
+        srcfile <- getConfig("srcfile")
+        
+        if(!is.null(srcfile))
+                srcfile
+        else if(is.null(srcfile) && length(showfiles()) == 1) {
                 sourcefile(showfiles())
+                getConfig("srcfile")
+        }
         else
                 stop("set source file with 'sourcefile'; ",
                      "use 'showfiles()' to see available files")
 }
 
 code <- function(num = NULL, full = FALSE) {
-        srcfile <- getConfig("srcfile")
-        checkSourceFile(srcfile)
-                
+        srcfile <- checkSourceFile()
         exprList <- parse(srcfile)
 
         if(is.null(num))
@@ -107,8 +111,7 @@ code <- function(num = NULL, full = FALSE) {
 
 showobjects <- function(num) {
         cachedir <- cache()
-        srcfile <- getConfig("srcfile")
-        checkSourceFile(srcfile)
+        srcfile <- checkSourceFile()
 
         meta <- read.dcf(metafile(srcfile))
 
@@ -120,8 +123,7 @@ showobjects <- function(num) {
 
 loadcache <- function(num, env = parent.frame()) {
         cachedir <- cache()
-        srcfile <- getConfig("srcfile")
-        checkSourceFile(srcfile)
+        srcfile <- checkSourceFile()
         
         meta <- read.dcf(metafile(srcfile))
 
@@ -140,8 +142,7 @@ loadcache <- function(num, env = parent.frame()) {
 
 checkcode <- function(num, env = parent.frame()) {
         cachedir <- cache()
-        srcfile <- getConfig("srcfile")
-        checkSourceFile(srcfile)
+        srcfile <- checkSourceFile()
 
         meta <- read.dcf(metafile(srcfile))
         forceEval <- as.logical(as.numeric(meta[, "forceEval"]))
@@ -155,12 +156,12 @@ checkcode <- function(num, env = parent.frame()) {
         for(i in num) {
                 expr <- exprList[i]
                 obj <- strsplit(meta[i, "objects"], ";", fixed = TRUE)[[1]]
-                message("evaluating expression ", i)
-
+                message("checking expression ", i, ": ", appendLF = FALSE)
+                
                 tryCatch({
                         eval(expr, env, globalenv())
                 }, error = function(err) {
-                        message("ERROR: unable to evaluate expression")
+                        message("\nERROR: unable to evaluate expression")
                         message(conditionMessage(err))
 
                         if(!forceEval[i]) {
@@ -168,7 +169,6 @@ checkcode <- function(num, env = parent.frame()) {
                                 loadcache(i, env)
                         }
                 })
-                message("checking expression ", i, ": ", appendLF = FALSE)
                 test <- logical(length(obj))
                 
                 for(j in seq_along(obj)) {
@@ -189,8 +189,7 @@ checkcode <- function(num, env = parent.frame()) {
 
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
         cachedir <- cache()
-        srcfile <- getConfig("srcfile")
-        checkSourceFile(srcfile)
+        srcfile <- checkSourceFile()
         
         meta <- read.dcf(metafile(srcfile))
         exprList <- parse(srcfile)
