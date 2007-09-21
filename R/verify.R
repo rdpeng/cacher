@@ -37,6 +37,7 @@ checkcode <- function(num, env = parent.frame()) {
         if(missing(num))
                 num <- seq_len(nrow(meta))
         tempout <- tempfile()
+        on.exit(file.remove(tempout))
         
         for(i in num) {
                 expr <- exprList[i]
