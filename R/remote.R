@@ -50,24 +50,11 @@ downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
                 src <- file.path(dbdir(origin), dbfiles[i])
                 dest <- file.path(dbdir(cachedir), dbfiles[i])
 
-                showMeter(i, length(dbfiles))
-
                 if(file.exists(dest) && skip.existing)
                         next
                 download(src, dest)
         }
         vmessage("\nfinished")
-}
-
-showMeter <- function(i, n) {
-        if(n < getOption("width"))
-                vmessage("=", appendLF = FALSE)
-        else {
-                mark <- i * getOption("width") / n
-
-                if(floor(mark) == ceiling(mark))
-                        vmessage("=", appendLF = FALSE)
-        }
 }
 
 isClone <- function() {
