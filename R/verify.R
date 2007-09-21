@@ -3,7 +3,7 @@
 
 checkobjects <- function(obj, env, checkenv) {
         if(length(obj) == 0) {
-                message("++ no objects to check, OK")
+                message("= no objects to check, OK")
                 return(NULL)
         }
         test <- logical(length(obj))
@@ -14,14 +14,14 @@ checkobjects <- function(obj, env, checkenv) {
         }
         if(all(test))
                 message(sprintf(ngettext(length(obj),
-                                         "++ object %s OK",
-                                         "++ objects %s OK"),
+                                         "+ object %s OK",
+                                         "+ objects %s OK"),
                                 paste(sQuote(obj), collapse = ", ")))
         else {
                 failed <- which(!test)
                 msg <- ngettext(sum(failed),
-                                "-- object %s not verified, FAILED",
-                                "-- objects %s not verified, FAILED")
+                                "- object %s not verified, FAILED",
+                                "- objects %s not verified, FAILED")
                 message(sprintf(msg, paste(sQuote(obj[failed]), collapse=", ")))
         }
 }
@@ -46,14 +46,14 @@ checkcode <- function(num, env = parent.frame()) {
                 status <- tryCatch({
                         eval(expr, env, globalenv())
                 }, condition = function(cond) {
-                        message("-- problem evaluating expression, FAILED")
+                        message("- problem evaluating expression, FAILED")
                         msg <- conditionMessage(cond)
 
                         if(length(msg) > 0)
-                                message(gettextf("-- %s: '%s'",
+                                message(gettextf("- %s: '%s'",
                                                  class(cond)[1], msg))
                         if(!forceEval[i]) {
-                                message("-- loading objects from cache")
+                                message("- loading objects from cache")
                                 obj <- loadcache(i, env)
                                 forceDownload(obj, env)
                         }
