@@ -50,10 +50,10 @@ checkcode <- function(num, env = parent.frame()) {
                         msg <- conditionMessage(cond)
 
                         if(length(msg) > 0)
-                                message(gettextf("- %s: '%s'",
+                                vmessage(gettextf("- %s: '%s'",
                                                  class(cond)[1], msg))
                         if(!forceEval[i]) {
-                                message("- loading objects from cache")
+                                vmessage("- loading objects from cache")
                                 obj <- loadcache(i, env)
                                 forceDownload(obj, env)
                         }

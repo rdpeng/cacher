@@ -41,7 +41,7 @@ packageArchive <- function(id) {
 
 downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
                             origin = NULL) {
-        message("downloading cache database files")
+        vmessage("downloading cache database files")
         dbfiles <- readLines(file.path(cachedir, "dbfiles"))
 
         if(is.null(origin))
@@ -56,17 +56,17 @@ downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
                         next
                 download(src, dest)
         }
-        message("\nfinished")
+        vmessage("\nfinished")
 }
 
 showMeter <- function(i, n) {
         if(n < getOption("width"))
-                message("=", appendLF = FALSE)
+                vmessage("=", appendLF = FALSE)
         else {
                 mark <- i * getOption("width") / n
 
                 if(floor(mark) == ceiling(mark))
-                        message("=", appendLF = FALSE)
+                        vmessage("=", appendLF = FALSE)
         }
 }
 
@@ -77,7 +77,7 @@ isClone <- function() {
 transferCacheFile <- function(cacheFile, cachedir) {
         if(file.exists(cacheFile))
                 return(NULL)
-        message("transferring cache db file ", basename(cacheFile))
+        vmessage("transferring cache db file ", basename(cacheFile))
         origin <- readLines(file.path(cachedir, "origin"))
         src <- file.path(dbdir(origin), basename(cacheFile))
 
@@ -102,7 +102,7 @@ download <- function(url, destfile, method = "auto", quiet = TRUE,
 initDownload <- function(id) {
         cachedir <- cache()
 
-        message("downloading source file list")
+        vmessage("downloading source file list")
         download(file.path(id, "srcfiles"), file.path(cachedir, "srcfiles"),
                    mode = "w")
         srcfiles <- readLines(file.path(cachedir, "srcfiles"))
@@ -110,14 +110,14 @@ initDownload <- function(id) {
         for(srcfile in srcfiles) {
                 metafile <- file.path(metadir(id),
                                       paste(srcfile, "meta", sep = "."))
-                message("downloading metadata")
+                vmessage("downloading metadata")
                 download(metafile,
                          file.path(metadir(cachedir), basename(metafile)),
                          mode = "w")
-                message("downloading source files")
+                vmessage("downloading source files")
                 download(file.path(srcdir(id), srcfile),
                          file.path(srcdir(cachedir), srcfile), mode = "w")
-                message("downloading cache database file list")
+                vmessage("downloading cache database file list")
                 download(file.path(id, "dbfiles"),
                          file.path(cachedir, "dbfiles"), mode = "w")
         }

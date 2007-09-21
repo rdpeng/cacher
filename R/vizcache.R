@@ -156,21 +156,21 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
                 skip <- numeric(0)
         for(i in num) {
                 if(i %in% skip) {
-                        message("skipping expression ", i)
+                        vmessage("skipping expression ", i)
                         next
                 }
                 if(!forceEval[i] && !forceAll) {
-                        message("loading cache for expression ", i)
+                        vmessage("loading cache for expression ", i)
                         loadcache(i, env)
                 }
                 else {
                         expr <- exprList[i]
-                        message("evaluating expression ", i)
+                        vmessage("evaluating expression ", i)
                         tryCatch({
                                 eval(expr, env, globalenv())
                         }, error = function(err) {
-                                message("ERROR: unable to evaluate expression")
-                                message(conditionMessage(err))
+                                vmessage("ERROR: unable to evaluate expression")
+                                vmessage(conditionMessage(err))
                         })
                 }
         }
