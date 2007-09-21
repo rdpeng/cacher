@@ -1,3 +1,6 @@
+################################################################################
+## Code for verifying/checking an analysis
+
 checkobjects <- function(obj, env, checkenv) {
         if(length(obj) == 0) {
                 message("++ no objects to check, OK")
@@ -15,13 +18,11 @@ checkobjects <- function(obj, env, checkenv) {
                                          "++ objects %s OK"),
                                 paste(sQuote(obj), collapse = ", ")))
         else {
-                message("-- FAILED")
                 failed <- which(!test)
-                msg <- sprintf(ngettext(sum(failed),
-                                        "-- object %s not verified",
-                                        "-- objects %s not verified"),
-                               paste(sQuote(obj[failed]), collapse = ", "))
-                message(msg)
+                msg <- ngettext(sum(failed),
+                                "-- object %s not verified, FAILED",
+                                "-- objects %s not verified, FAILED")
+                message(sprintf(msg, paste(sQuote(obj[failed]), collapse=", ")))
         }
 }
 
@@ -35,24 +36,28 @@ checkcode <- function(num, env = parent.frame()) {
 
         if(missing(num))
                 num <- seq_len(nrow(meta))
-        checkenv <- new.env(parent = emptyenv())
-        loadcache(num, checkenv)
         
         for(i in num) {
                 expr <- exprList[i]
                 message("checking expression ", i, "")
+                checkenv <- new.env(parent = emptyenv())
+                loadcache(i, checkenv)
                 
                 status <- tryCatch({
                         eval(expr, env, globalenv())
-                }, error = function(err) {
-                        message("-- unable to evaluate expression, FAILED")
-                        message(gettextf("-- error: '%s'", conditionMessage(err)))
+                }, condition = function(cond) {
+                        message("-- problem evaluating expression, FAILED")
+                        msg <- conditionMessage(cond)
 
+                        if(length(msg) > 0)
+                                message(gettextf("-- %s: '%s'",
+                                                 class(cond)[1], msg))
                         if(!forceEval[i]) {
-                                message("-- loading cache for expression ", i)
-                                loadcache(i, env)
+                                message("-- loading objects from cache")
+                                obj <- loadcache(i, env)
+                                forceDownload(obj, env)
                         }
-                        err
+                        cond
                 })
                 if(!inherits(status, "condition")) {
                         obj <- strsplit(meta[i, "objects"], ";",
@@ -63,3 +68,8 @@ checkcode <- function(num, env = parent.frame()) {
 }
 
 
+forceDownload <- function(objectList, env) {
+        for(obj in objectList) {
+                get(obj, env, inherits = FALSE)
+        }
+}
