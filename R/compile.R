@@ -46,12 +46,19 @@ unsetHookFunctions <- function() {
         setHook("grid.newpage", getConfig("oldGridHook"), "replace")
 }
 
+vmessage <- function(..., domain = NULL, appendLF = TRUE) {
+        verb <- getOption("verbose")
+
+        if(!is.null(verb) && verb)
+                message(..., domain = domain, appendLF = appendLF)
+}
+
 ################################################################################
 
 setConfig <- function(name, value) {
         allowed <- c("srcfile", "cachedir", "oldPlotHook", "oldGridHook",
                      "new.plot", "metadata", "logfile", "expr.tag",
-                     "new.files", "new.objects", "skipcode",
+                     "new.files", "new.objects", "skipcode", "verbose",
                      "exprDeparseWidth", "history", "archive")
         if(!(name %in% allowed))
                 stop(gettextf("invalid config option '%s'", name))
