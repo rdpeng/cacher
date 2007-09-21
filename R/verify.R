@@ -36,6 +36,7 @@ checkcode <- function(num, env = parent.frame()) {
 
         if(missing(num))
                 num <- seq_len(nrow(meta))
+        tempout <- tempfile()
         
         for(i in num) {
                 expr <- exprList[i]
@@ -44,7 +45,9 @@ checkcode <- function(num, env = parent.frame()) {
                 loadcache(i, checkenv)
                 
                 status <- tryCatch({
-                        eval(expr, env, globalenv())
+                        output <- capture.output({
+                                eval(expr, env, globalenv())
+                        }, file = tempout)
                 }, condition = function(cond) {
                         message("- problem evaluating expression, FAILED")
                         msg <- conditionMessage(cond)
