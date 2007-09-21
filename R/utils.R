@@ -18,7 +18,8 @@ package <- function(cachedir) {
         cwd <- getwd()
         setwd(dirname(cachedir))        
         on.exit(setwd(cwd))
-        
+
+        message("zipping cache directory...")
         cmd <- paste("zip -r -X", name, basename(cachedir))
         out <- system(cmd, intern = TRUE)
         
