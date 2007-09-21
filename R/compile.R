@@ -47,7 +47,7 @@ unsetHookFunctions <- function() {
 }
 
 vmessage <- function(..., domain = NULL, appendLF = TRUE) {
-        verb <- getOption("verbose")
+        verb <- getConfig("verbose")
 
         if(!is.null(verb) && verb)
                 message(..., domain = domain, appendLF = appendLF)
