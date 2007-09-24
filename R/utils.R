@@ -28,13 +28,13 @@ package <- function(cachedir) {
         message(gettextf("creating package '%s'", basename(newname)))
 
         if(file.exists(newname))
-                warning(gettextf("existing package file '%s' overwritten",
+                warning(gettextf("existing package file overwritten",
                                  newname))
         status <- file.copy(name, newname, overwrite = TRUE)
 
         if(!status)
                 warning("problem copying package file")
-        invisible(newname)
+        invisible(basename(newname))
 }
 
 ################################################################################
