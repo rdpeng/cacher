@@ -45,6 +45,6 @@ pkgupload <- function(pkgname) {
         message(gettextf("uploading cache package '%s'", pkgname))
         
         out <- postForm("http://10.253.164.24/cgi-bin/cpkg-upload.pl",
-                        file = normalizePath(pkgname))
+                        file1 = normalizePath(pkgname))
         invisible(out)
 }
