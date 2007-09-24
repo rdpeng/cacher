@@ -34,6 +34,6 @@ package <- function(cachedir) {
 
         if(!status)
                 warning("problem copying package file")
-        invisible(out)
+        invisible(newname)
 }
 
