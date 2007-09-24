@@ -37,3 +37,14 @@ package <- function(cachedir) {
         invisible(newname)
 }
 
+################################################################################
+
+pkgupload <- function(pkgname) {
+        if(!require(RCurl))
+                stop("'RCurl' required for uploading cache packages")
+        message(gettextf("uploading cache package '%s'", pkgname))
+        
+        out <- postForm("http://10.253.164.24/cgi-bin/cpkg-upload.pl",
+                        file = normalizePath(pkgname))
+        invisible(out)
+}
