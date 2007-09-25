@@ -44,7 +44,11 @@ pkgupload <- function(pkgname) {
                 stop("'RCurl' required for uploading cache packages")
         message(gettextf("uploading cache package '%s'", pkgname))
         
-        out <- postForm("http://10.253.164.24/cgi-bin/cpkg-upload.pl",
-                        file1 = normalizePath(pkgname))
+        ## out <- postForm("http://10.253.164.24/cgi-bin/cpkg-upload.pl",
+        ##                 file1 = normalizePath(pkgname))
+        cmd <- paste("curl -F cpkgfile=@", normalizePath(pkgname),
+                     " http://10.253.164.24/cgi-bin/cpkg-upload.pl",
+                     sep = "")
+        out <- system(cmd, intern = TRUE)
         invisible(out)
 }
