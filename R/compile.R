@@ -231,8 +231,7 @@ writeMetadata <- function(expr, srcfile) {
                             exprID = basename(exprFileName(expr)),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)),
-                            tag = getConfig("expr.tag"),
-                            time = Sys.time())
+                            tag = getConfig("expr.tag"))
         if(nchar(getConfig("expr.tag"), "chars") > 0)
                 setConfig("expr.tag", "")
         
