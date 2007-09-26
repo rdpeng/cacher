@@ -23,6 +23,8 @@ setConfig(name, value)
     \item{\code{cachedir}}{the cache directory}
     \item{\code{archive}}{URL location of the archive from which cache packages
       should be downloaded}
+    \item{\code{verbose}}{should more messages be printed to the
+      console?  Default is \code{FALSE}.}
   }
 }
 \value{
