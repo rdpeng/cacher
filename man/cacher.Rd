@@ -6,58 +6,30 @@
   ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-cacher(file, cachedir = ".cache")
+cacher(srcfile, cachedir = ".cache", logfile = NULL)
+cc(expr, cachedir = ".cache", srcfile = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{file}{ ~~Describe \code{file} here~~ }
-  \item{cachedir}{ ~~Describe \code{cachedir} here~~ }
+  \item{srcfile}{character, source file to be cached}
+  \item{cachedir}{character, path to cache directory}
+  \item{logfile}{character, path to file for log messages}
+  \item{expr}{an R expression}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  \code{cacher} caches the results of evaluating the R expressions in
+  the source file \code{srcfile}.  Contents are cached to the directory
+  indicated by \code{cachedir} and by default, log messages are written
+  to a log file in the cache directory.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  Nothing useful is returned.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\author{Roger D. Peng \email{rpeng@jhsph.edu}}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function(file, cachedir = ".cache") {
-        if(!file.exists(cachedir))
-                dir.create(cachedir)
-        if(!file.exists(metadata <- file.path(cachedir, ".exprMetaData")))
-                file.create(metadata)
-        config <- list(cachedir = cachedir,
-                       metadata = metadata)
-        exprList <- parse(file, srcfile = NULL)
-
-        initForceEvalList(config)
-
-        for(i in seq_along(exprList)) {
-                cat(i, " ")
-                expr <- exprList[i]
-                config$history <- exprList[seq_len(i - 1)]
-                runExpression(expr, config)
-
-                writeMetadata(expr, config)
-        }
-  }
+\dontrun{
+sfile <- system.file("examples", "sample.R", package = "cacher")
+cacher(sfile)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}
+\keyword{utilities}
