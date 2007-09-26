@@ -230,11 +230,7 @@ writeMetadata <- function(expr, srcfile) {
                             files = paste(getConfig("new.files"), collapse = ";"),
                             exprID = basename(exprFileName(expr)),
                             exprHash = hash(expr),
-                            forceEval = as.integer(checkForceEvalList(expr)),
-                            tag = getConfig("expr.tag"))
-        if(nchar(getConfig("expr.tag"), "chars") > 0)
-                setConfig("expr.tag", "")
-        
+                            forceEval = as.integer(checkForceEvalList(expr)))
         write.dcf(entry, file = getConfig("metadata"), append = TRUE,
                   width = 5000)
         invisible(entry)
