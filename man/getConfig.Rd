@@ -18,10 +18,12 @@ setConfig(name, value)
 \details{
   There are a number of options that \code{cacher} checks but some of
   the important ones for users are:
-  \item{srcfile}{the source file currently being cached or explored}
-  \item{cachedir}{the cache directory}
-  \item{archive}{URL location of the archive from which cache packages
-    should be downloaded}
+  \describe{
+    \item{\code{srcfile}}{the source file currently being cached or explored}
+    \item{\code{cachedir}}{the cache directory}
+    \item{\code{archive}}{URL location of the archive from which cache packages
+      should be downloaded}
+  }
 }
 \value{
   \code{getConfig} returns the value of the given option or \code{NULL}
