@@ -1,12 +1,12 @@
 Package: cacher
-Title: Tools for caching computations
+Title: Tools for caching and distributing statistical analyses
 Version: 0.1
-Date: 2007-07-19
-Depends: R (>= 2.5.1)
+Date: 2007-09-27
+Depends: R (>= 2.6.0)
 Imports: digest, utils, tools
 Suggests: RCurl
 LazyLoad: yes
 Author: Roger D. Peng <rpeng@jhsph.edu>
 Maintainer: Roger D. Peng <rpeng@jhsph.edu>
-Description: Tools for caching computations and storing them in key-value databases
+Description: This package provides tools for caching statistical analyses in key-value databases which can subsequently be distributed over the web.  
 License: GNU GPL (version 2 or later)
