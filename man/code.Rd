@@ -1,5 +1,6 @@
 \name{code}
 \alias{code}
+\alias{showcode}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ ~~function to do ... ~~ }
 \description{
