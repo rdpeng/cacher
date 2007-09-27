@@ -165,9 +165,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         mkdirs(cachedir)
 
         file.create(metafile(srcfile))
-        metacon <- file(metafile(srcfile), "w")
-        on.exit(close(metacon))
-        setConfig("metadata", metacon)
+        setConfig("metadata", metafile(srcfile))
 
         createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
@@ -234,9 +232,9 @@ writeMetadata <- function(expr, srcfile) {
                             exprID = basename(exprFileName(expr)),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)))
-        metacon <- getConfig("metadata")
-        write.dcf(entry, file = metacon, width = 5000)
-        cat("\n", file = metacon)  ## Needed for R >= 2.6.0
+        mfile <- getConfig("metadata")
+        write.dcf(entry, file = file, width = 5000, append = TRUE)
+        cat("\n", file = mfile, append = TRUE)  ## Needed for R >= 2.6.0
         invisible(entry)
 }
 
