@@ -163,12 +163,15 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
         exprList <- parse(srcfile, srcfile = NULL)
 
         mkdirs(cachedir)
+
         file.create(metafile(srcfile))
-        setConfig("metadata", metafile(srcfile))
+        metacon <- file(metafile(srcfile), "w")
+        on.exit(close(metacon))
+        setConfig("metadata", metacon)
 
         createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
-        on.exit(unsetHookFunctions())
+        on.exit(unsetHookFunctions(), add = TRUE)
 
         setConfig("cachedir", cachedir)
         setConfig("new.plot", FALSE)
@@ -231,8 +234,9 @@ writeMetadata <- function(expr, srcfile) {
                             exprID = basename(exprFileName(expr)),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)))
-        write.dcf(entry, file = getConfig("metadata"), append = TRUE,
-                  width = 5000)
+        metacon <- getConfig("metadata")
+        write.dcf(entry, file = metacon, width = 5000, append = TRUE)
+        cat("\n", file = metacon)  ## Needed for R >= 2.6.0
         invisible(entry)
 }
 
