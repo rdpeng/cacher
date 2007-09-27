@@ -1,49 +1,26 @@
 \name{pkgupload}
 \alias{pkgupload}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{Upload cache packages}
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Tool for uploading a cache package to a remote archive
 }
 \usage{
 pkgupload(pkgname)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{pkgname}{ ~~Describe \code{pkgname} here~~ }
+  \item{pkgname}{character, file name for cache package}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  If one has created a cache package with the \code{package} function,
+  the package can be uploaded to a remote archive using the
+  \code{pkgupload} function.  The \code{postForm} function from the
+  \code{RCurl} package is required for this to work.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  The (HTML) response from the webserver is returned as a character
+  vector.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (pkgname) 
-{
-    if (!require(RCurl)) 
-        stop("'RCurl' required for uploading cache packages")
-    message(gettextf("uploading cache package '\%s'", pkgname))
-    fileInfo <- fileUpload(normalizePath(pkgname))
-    out <- postForm("http://10.253.164.24/cgi-bin/cpkg-upload.pl", 
-        cpkgfile = fileInfo)
-    invisible(out)
-  }
-}
+\seealso{\code{\link{package}}}
 \keyword{utilities}
