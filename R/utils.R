@@ -13,6 +13,8 @@ package <- function(cachedir) {
                 cachedir <- getConfig("cachedir")
         if(cachedir == ".")
                 stop("'cachedir' cannot be '.' when creating a package")
+        if(!nzchar(Sys.which("zip")))
+                stop("'zip' utility not found in path")
         name <- paste(tempfile(), "zip", sep = ".")
 
         cwd <- getwd()
