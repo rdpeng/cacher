@@ -19,9 +19,11 @@ showobjects(num)
   \code{loadcache}.  If \code{num} is a sequence, then a single
   character vector is returned containing the union of the names of the
   objects cached.
+
+  Expression sequence numbers can be obtained by calling \code{code}.
 }
 \value{
   A character vector containing the names of the objects
 }
-\seealso{\code{\link{\loadcache}}}
+\seealso{\code{\link{loadcache}}, \code{\link{code}}}
 \keyword{utilities}
