@@ -231,6 +231,7 @@ writeMetadata <- function(expr, srcfile) {
                             exprID = basename(exprFileName(expr)),
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)))
+        ## cat("writeMetadata:", as.character(entry$exprID), "\n")
         mfile <- getConfig("metadata")
         write.dcf(entry, file = mfile, width = 5000, append = TRUE)
         cat("\n", file = mfile, append = TRUE)  ## Needed for R >= 2.6.0
@@ -261,6 +262,7 @@ runExpression <- function(expr) {
                 return(NULL)
         }
         exprFile <- exprFileName(expr)
+        ## cat("runExpression:", as.character(basename(exprFile)), "\n")
         forceEval <- FALSE
 
         if(!isCached(exprFile)) {
@@ -292,6 +294,8 @@ hash <- function(object) {
 
 hashExpr <- function(expr, history) {
         srcfile <- sourcefile()
+        expr <- deparse(expr, width.cutoff = 60)
+        history <- deparse(history, width.cutoff = 60)
         obj <- list(expr, history, srcfile)
         hash(obj)
 }
