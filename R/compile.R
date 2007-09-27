@@ -187,7 +187,6 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
                 exprStr <- deparse(expr[[1]],width=getConfig("exprDeparseWidth"))[1]
                 msg <- sprintf("%d: %s", i, exprStr)
                 logMessage(msg)
-                ## setConfig("history", exprList[seq_len(i - 1)])
                 setHistory(expr, exprList[seq_len(i - 1)])
 
                 runExpression(expr)
