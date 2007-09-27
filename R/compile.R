@@ -232,7 +232,7 @@ writeMetadata <- function(expr, srcfile) {
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)))
         mfile <- getConfig("metadata")
-        write.dcf(entry, file = file, width = 5000, append = TRUE)
+        write.dcf(entry, file = mfile, width = 5000, append = TRUE)
         cat("\n", file = mfile, append = TRUE)  ## Needed for R >= 2.6.0
         invisible(entry)
 }
