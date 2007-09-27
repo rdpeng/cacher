@@ -1,34 +1,33 @@
 \name{code}
 \alias{code}
 \alias{showcode}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{Show code expressions}
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Show code expressions corresponding to a given source file
 }
 \usage{
 code(num = NULL, full = FALSE)
+showcode()
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{num}{ ~~Describe \code{num} here~~ }
-  \item{full}{ ~~Describe \code{full} here~~ }
+  \item{num}{expression sequence number}
+  \item{full}{logical, should the full expression be shown or a one-line
+  abbreviated version?}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  These functions can be used to show the expressions for a given source
+  file.  By default, \code{code} shows all expressions in a file in a
+  one-line abbreviated form along with their expression sequence
+  numbers.  To see each expression in its entirety, the argument
+  \code{full = TRUE} must be set.  If any expressions have been marked
+  to be skipped by \code{skipcode}, those expressions will be annotated
+  with an asterisk.
+
+  \code{showcode} shows the original source file in the pager, which can
+  be useful if one is interested in seeing any comments.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  Nothing useful is returned.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \keyword{utilities}
