@@ -235,7 +235,7 @@ writeMetadata <- function(expr, srcfile) {
                             exprHash = hash(expr),
                             forceEval = as.integer(checkForceEvalList(expr)))
         metacon <- getConfig("metadata")
-        write.dcf(entry, file = metacon, width = 5000, append = TRUE)
+        write.dcf(entry, file = metacon, width = 5000)
         cat("\n", file = metacon)  ## Needed for R >= 2.6.0
         invisible(entry)
 }
