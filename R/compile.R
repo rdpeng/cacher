@@ -151,10 +151,10 @@ cc <- function(expr, cachedir = ".cache", srcfile = NULL, ...) {
         if(!identical(globalenv(), parent.frame())) 
                 stop("'cc' must be called from the global environment")
         subexpr <- substitute(expr)
-        exprtext <- deparse(subexpr)
+        exprtext <- deparse(subexpr, width.cutoff = 60)
 
         if(is.null(srcfile))
-                srcfile <- file.path(tempdir(), hash(subexpr))
+                srcfile <- file.path(tempdir(), hash(exprtext))
         writeLines(exprtext, srcfile)
         cacher(srcfile, cachedir, ...)
 }
