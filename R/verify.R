@@ -46,7 +46,7 @@ checkcode <- function(num, env = parent.frame()) {
                 loadcache(i, checkenv)
                 
                 status <- tryCatch({
-                        output <- capture.output({
+                        capture.output({
                                 eval(expr, env, globalenv())
                         }, file = tempout)
                 }, condition = function(cond) {
