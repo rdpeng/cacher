@@ -15,8 +15,8 @@ skipcode(num, append = TRUE)
     skipped?}
 }
 \details{
-  \code{skipcode} can be to force certain expressions to be skipped from
-  evaluation when using the \code{runcode} function (for example, if
+  \code{skipcode} can be used to force certain expressions to be skipped
+  from evaluation when using the \code{runcode} function (for example, if
   certain external resources are not available).  There is a globally
   maintained list of expressions that will be skipped for a given source
   file.
