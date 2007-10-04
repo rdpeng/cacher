@@ -173,7 +173,6 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
         setConfig("cachedir", cachedir)
         setConfig("new.plot", FALSE)
-        setConfig("expr.tag", "")
 
         ## Copy to cache for later use
         srcfile.cache <- copyFileToCache(srcfile, cachedir)
