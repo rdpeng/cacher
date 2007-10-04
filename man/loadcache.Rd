@@ -13,7 +13,7 @@ loadcache(num, env = parent.frame())
   \item{env}{environment into which objects should be loaded}
 }
 \details{
-  Objects for an expression can be lazy-loaded into the environment
+  Objects associated with an expression can be lazy-loaded into the environment
   \code{env} using \code{loadcache}.  One can obtain a list of which
   objects are associated with which expressions using the
   \code{showobjects} function.  If \code{loadcache} is used to load
