@@ -169,7 +169,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
         createLogFile(cachedir, logfile, srcfile)
         setHookFunctions()
-        on.exit(unsetHookFunctions(), add = TRUE)
+        on.exit(unsetHookFunctions())
 
         setConfig("cachedir", cachedir)
         setConfig("new.plot", FALSE)
