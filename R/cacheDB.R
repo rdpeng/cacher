@@ -41,12 +41,15 @@ isEmptyIndex <- function(idx) {
 cacheLazyLoad <- function(file, envir = parent.frame()) {
         cachedir <- cache()
 
-        if(!file.exists(file)) {
+        if(file.exists(file))
+                dbfile <- file
+        else if(isClone()) {  ## file exists, but needs to be transferred
                 origin <- readLines(file.path(cachedir, "origin"))
                 dbfile <- file.path(dbdir(origin), basename(file))
         }
-        else
-                dbfile <- file
+        else 
+                stop(gettextf("unable to lazy-load file '%s'", file))
+        
         dbcon <- gzcon(file(dbfile, "rb"))
         index <- tryCatch({
                 unserialize(dbcon)
