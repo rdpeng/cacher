@@ -385,6 +385,7 @@ evalAndCache <- function(expr, exprFile) {
 
         ## Get newly assigned object names
         keys <- ls(env, all.names = TRUE)
+        keys <- checkNonCacheable(keys, env)
 
         status <- tryCatch({
                 saveWithIndex(keys, exprFile, env)
@@ -394,6 +395,16 @@ evalAndCache <- function(expr, exprFile) {
         })
         if(inherits(status, "condition"))
                 stop(status)
+        keys
+}
+
+checkNonCacheable <- function(keys, env) {
+        for(k in keys) {
+                x <- get(k, env, inherits = FALSE)
+
+                if(inherits(x, "connection"))
+                        return(character(0))
+        }
         keys
 }
 
