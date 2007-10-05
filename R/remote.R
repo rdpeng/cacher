@@ -58,7 +58,8 @@ downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
 }
 
 isClone <- function() {
-        file.exists(file.path(cache(), "origin"))
+        originfile <- file.path(cache(), "origin")
+        file.exists(originfile) && (file.info(originfile)$size > 0)
 }
 
 transferCacheFile <- function(cacheFile, cachedir) {
