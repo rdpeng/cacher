@@ -12,7 +12,7 @@ showfiles()
 \details{
   This function can be used to show what source files are available in
   the cache to examined by the user.  One can switch between different
-  source files by calling the \code{sourcfile} function.
+  source files by calling the \code{sourcefile} function.
 }
 \value{
   A character vector of the available source files.
