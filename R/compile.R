@@ -287,8 +287,13 @@ exprFileName <- function(expr) {
         file.path(dbdir(cache()), hashExpr(expr, getHistory(expr)))
 }
 
+hashFile <- function(filename) {
+        stopifnot(length(filename) == 1)
+        digest(filename, algo = "sha1", file = TRUE)
+}
+
 hash <- function(object) {
-        digest(object, algo = "md5")
+        digest(object, algo = "sha1")
 }
 
 hashExpr <- function(expr, history) {
@@ -298,7 +303,6 @@ hashExpr <- function(expr, history) {
         obj <- list(expr, history, srcfile)
         hash(obj)
 }
-
 
 ################################################################################
 

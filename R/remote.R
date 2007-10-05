@@ -17,7 +17,7 @@ clonecache <- function(origin, cachedir = ".cache", all.files = FALSE, id = NULL
 
 
 ## To create the directory for the archived cache, we take the first 4
-## chars of the MD4 checksum as the 'prefix' directory and the
+## chars of the SHA1 checksum as the 'prefix' directory and the
 ## remaining chars as the 'suffix' or package directory.  The package
 ## contents are stored in <baseurl>/<prefix>/<suffix>.  This prevents
 ## having a single directory with a lot of files.
