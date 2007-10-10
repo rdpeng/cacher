@@ -59,7 +59,7 @@ setConfig <- function(name, value) {
         allowed <- c("srcfile", "cachedir", "oldPlotHook", "oldGridHook",
                      "new.plot", "metadata", "logfile", "expr.tag",
                      "new.files", "new.objects", "skipcode", "verbose",
-                     "exprDeparseWidth", "history", "archive")
+                     "exprDeparseWidth", "history", "archive", "uploadscript")
         if(!(name %in% allowed))
                 stop(gettextf("invalid config option '%s'", name))
         assign(name, value, .config, inherits = FALSE)
