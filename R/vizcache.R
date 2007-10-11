@@ -75,7 +75,7 @@ metafile <- function(srcfile) {
 }
 
 showcode <- function() {
-        srcfile <- getConfig("srcfile")
+        srcfile <- checkSourceFile()
         file.show(srcfile)
 }
 
