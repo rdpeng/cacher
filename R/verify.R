@@ -9,7 +9,8 @@ checkobjects <- function(obj, env, checkenv) {
         test <- logical(length(obj))
 
         for(j in seq_along(obj)) {
-                testmsg <- all.equal(get(obj[j], env), get(obj[j], checkenv))
+                testmsg <- all.equal(get(obj[j], env, inherits = FALSE),
+                                     get(obj[j], checkenv, inherits = FALSE))
                 test[j] <- isTRUE(testmsg)
         }
         if(all(test))
