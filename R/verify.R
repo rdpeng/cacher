@@ -9,8 +9,8 @@ checkobjects <- function(obj, env, checkenv) {
         test <- logical(length(obj))
 
         for(j in seq_along(obj)) {
-                test[j] <- isTRUE(all.equal(get(obj[j], env),
-                                            get(obj[j], checkenv)))
+                testmsg <- all.equal(get(obj[j], env), get(obj[j], checkenv))
+                test[j] <- isTRUE(testmsg)
         }
         if(all(test))
                 message(sprintf(ngettext(length(obj),
@@ -23,6 +23,7 @@ checkobjects <- function(obj, env, checkenv) {
                                 "- object %s not verified, FAILED",
                                 "- objects %s not verified, FAILED")
                 message(sprintf(msg, paste(sQuote(obj[failed]), collapse=", ")))
+                message(paste("-", testmsg, collapse = "\n"))
         }
 }
 
