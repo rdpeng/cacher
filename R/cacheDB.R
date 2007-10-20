@@ -10,10 +10,18 @@ saveWithIndex <- function(list = character(0), file, envir = parent.frame()) {
 		if(is.environment(x))
 			warning(gettextf("saving of environments not supported"))
 		list(key = symname,
-		     bytes = serialize(x, connection = NULL))
+		     bytes = serialize(x, connection = NULL),
+		     hash = hash(x))
 	})
 	writeIndex(byteList, con)
+	writeHash(byteList, con)
 	writeData(byteList, con)
+}
+
+writeHash <- function(byteList, con) {
+	hashlist <- sapply(byteList, "[[", "hash")
+	names(hashlist) <- sapply(byteList, "[[", "key")
+	serialize(hashlist, con)
 }
 
 writeIndex <- function(byteList, con) {
@@ -47,9 +55,10 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
 		origin <- readLines(file.path(cachedir, "origin"))
 		dbfile <- file.path(dbdir(origin), basename(file))
 	}
-	else 
+	else
 		stop(gettextf("unable to lazy-load file '%s'", file))
-	
+
+	## This might be read over the network
 	dbcon <- gzcon(file(dbfile, "rb"))
 	index <- tryCatch({
 		unserialize(dbcon)
@@ -59,6 +68,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
 	})
 	if(isEmptyIndex(index))
 		return(character(0))
+
 	wrap <- function(x, pos, env) {
 		force(x)
 		force(pos)
@@ -68,7 +78,8 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
 				transferCacheFile(file, cachedir)
 			con <- gzfile(file, "rb")
 			tryCatch({
-				junk <- unserialize(con)
+				index <- unserialize(con)
+				hash <- unserialize(con)
 				offset <- seek(con)
 				seek(con, pos + offset)
 				unserialize(con)
