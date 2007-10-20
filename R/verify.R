@@ -40,13 +40,13 @@ checkcode <- function(num, env = parent.frame()) {
 		num <- seq_len(nrow(meta))
 	tempout <- tempfile()
 	on.exit(file.remove(tempout))
-	
+
 	for(i in num) {
 		expr <- exprList[i]
 		message("checking expression ", i, "")
 		checkenv <- new.env(parent = emptyenv())
 		loadcache(i, checkenv)
-		
+
 		status <- tryCatch({
 			capture.output({
 				eval(expr, env, globalenv())
@@ -78,4 +78,45 @@ forceDownload <- function(objectList, env) {
 	for(obj in objectList) {
 		get(obj, env, inherits = FALSE)
 	}
+}
+
+################################################################################
+## Verify objects against their hashes
+
+verifyObject <- function(num) {
+	cachedir <- cache()
+	srcfile <- checkSourceFile()
+	meta <- read.dcf(metafile(srcfile))
+
+	if(missing(num))
+		num <- seq_len(nrow(meta))
+	check <- vector("list", length = length(num))
+
+	for(i in num) {
+		objects <- strsplit(meta[i, "objects"], ";", fixed = TRUE)[[1]]
+
+		if(length(objects) == 0)
+			next
+		filename <- file.path(cachedir, dbdir(cachedir),
+				      meta[i, "exprID"])
+		testenv <- new.env(parent = emptyenv())
+		cacheLazyLoad(filename, testenv)
+
+		con <- gzfile(filename, "rb")
+		tryCatch({
+			index <- unserialize(con)
+			hash <- unserialize(con)
+		}, finally = {
+			if(isOpen(con))
+				close(con)
+		})
+		valid <- sapply(seq_along(objects), function(j) {
+			obj <- get(objects[j], testenv)
+			identical(hash[objects[j]], hash(obj))
+		})
+		names(valid) <- objects
+		check[[i]] <- valid
+	}
+	use <- !sapply(check, is.null)
+	check[use]
 }
