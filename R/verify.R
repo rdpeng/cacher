@@ -28,7 +28,7 @@ checkobjects <- function(obj, env, checkenv) {
 	}
 }
 
-checkcode <- function(num, env = parent.frame()) {
+checkcode <- function(num, env = globalenv()) {
 	cachedir <- cache()
 	srcfile <- checkSourceFile()
 
@@ -49,7 +49,7 @@ checkcode <- function(num, env = parent.frame()) {
 
 		status <- tryCatch({
 			capture.output({
-				eval(expr, env, globalenv())
+				eval(expr, env, baseenv())
 			}, file = tempout)
 		}, condition = function(cond) {
 			message("- problem evaluating expression, FAILED")
