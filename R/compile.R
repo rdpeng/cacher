@@ -183,7 +183,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
 	for(i in seq_along(exprList)) {
 		expr <- exprList[i]
-		exprStr <- deparse(expr[[1]],width=getConfig("exprDeparseWidth"))[1]
+		exprStr <- abbreviateExpr(expr)
 		msg <- sprintf("%d: %s", i, exprStr)
 		logMessage(msg)
 		setHistory(expr, exprList[seq_len(i - 1)])
@@ -220,11 +220,16 @@ updateSrcFileList <- function(srcfile) {
 	writeLines(newlist, srcfilelist)
 }
 
-writeMetadata <- function(expr, srcfile) {
+abbreviateExpr <- function(expr) {
 	exprWidth <- getConfig("exprDeparseWidth")
+	deparse(expr[[1]], width = exprWidth)[1]
+}
+
+writeMetadata <- function(expr, srcfile) {
+	
 	
 	entry <- data.frame(srcfile = srcfile,
-			    expr = deparse(expr[[1]], width = exprWidth)[1],
+			    expr = abbreviateExpr(expr),
 			    objects = paste(getConfig("new.objects"),collapse=";"),
 			    files = paste(getConfig("new.files"), collapse = ";"),
 			    exprID = basename(exprFileName(expr)),
