@@ -73,21 +73,6 @@ getConfig <- function(name) {
 	})
 }
 
-setHistory <- function(expr, value) {
-	key <- hash(expr)
-	assign(key, value, .history, inherits = FALSE)
-}
-
-getHistory <- function(expr) {
-	key <- hash(expr)
-	
-	tryCatch({
-		get(key, .history, inherits = FALSE)
-	}, error = function(e) {
-		NULL
-	})
-}
-
 .config <- new.env(parent = emptyenv())
 
 .history <- new.env(parent = emptyenv())
@@ -186,10 +171,10 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 		exprStr <- abbreviateExpr(expr)
 		msg <- sprintf("%d: %s", i, exprStr)
 		logMessage(msg)
-		setHistory(expr, exprList[seq_len(i - 1)])
 
-		runExpression(expr)
-		writeMetadata(expr, srcfile)
+		exprFile <- exprFileName(expr, exprList[seq_len(i - 1)])
+		runExpression(expr, exprFile)
+		writeMetadata(expr, srcfile, exprFile)
 	}
 	updateDBFileList()
 }
@@ -225,14 +210,14 @@ abbreviateExpr <- function(expr) {
 	deparse(expr[[1]], width = exprWidth)[1]
 }
 
-writeMetadata <- function(expr, srcfile) {
+writeMetadata <- function(expr, srcfile, exprFile) {
 	
 	
 	entry <- data.frame(srcfile = srcfile,
 			    expr = abbreviateExpr(expr),
 			    objects = paste(getConfig("new.objects"),collapse=";"),
 			    files = paste(getConfig("new.files"), collapse = ";"),
-			    exprID = basename(exprFileName(expr)),
+			    exprID = basename(exprFile),
 			    exprHash = hash(expr),
 			    forceEval = as.integer(checkForceEvalList(expr)))
 	## cat("writeMetadata:", as.character(entry$exprID), "\n")
@@ -252,7 +237,7 @@ checkNewPlot <- function() {
 	newplot
 }
 
-runExpression <- function(expr) {
+runExpression <- function(expr, exprFile) {
 	## 'expr' is a single expression, so something like 'a <- 1'
 	if(checkForceEvalList(expr)) {
 		logMessage("  force expression evaluation")
@@ -265,8 +250,6 @@ runExpression <- function(expr) {
 			print(out$value)
 		return(NULL)
 	}
-	exprFile <- exprFileName(expr)
-	## cat("runExpression:", as.character(basename(exprFile)), "\n")
 	forceEval <- FALSE
 
 	if(!isCached(exprFile)) {
@@ -288,8 +271,8 @@ runExpression <- function(expr) {
 	invisible(objects)
 }
 
-exprFileName <- function(expr) {
-	file.path(dbdir(cache()), hashExpr(expr, getHistory(expr)))
+exprFileName <- function(expr, history) {
+	file.path(dbdir(cache()), hashExpr(expr, history))
 }
 
 hashFile <- function(filename) {
