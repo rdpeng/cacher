@@ -9,8 +9,9 @@ checkobjects <- function(obj, env, checkenv) {
 	test <- logical(length(obj))
 
 	for(j in seq_along(obj)) {
-		testmsg <- all.equal(get(obj[j], env, inherits = FALSE),
-				     get(obj[j], checkenv, inherits = FALSE))
+		objnew <- get(obj[j], env, inherits = FALSE)
+		objcheck <- get(obj[j], checkenv, inherits = FALSE)
+		testmsg <- all.equal(objnew, objcheck)
 		test[j] <- isTRUE(testmsg)
 	}
 	if(all(test))
@@ -43,13 +44,19 @@ checkcode <- function(num, env = globalenv()) {
 
 	for(i in num) {
 		expr <- exprList[i]
-		message("checking expression ", i, "")
+
+		if(forceEval[i]) {
+			message("evaluating expression ", i)
+			eval(expr, env)
+			next
+		}
+		message("checking expression ", i)
 		checkenv <- new.env(parent = emptyenv())
 		loadcache(i, checkenv)
 
 		status <- tryCatch({
 			capture.output({
-				eval(expr, env, baseenv())
+				eval(expr, env)
 			}, file = tempout)
 		}, condition = function(cond) {
 			message("- problem evaluating expression, FAILED")
