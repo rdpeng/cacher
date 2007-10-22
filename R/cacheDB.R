@@ -51,7 +51,8 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
 
 	if(file.exists(file))
 		dbfile <- file
-	else if(isClone()) {  ## file exists, but needs to be transferred
+	else if(isClone()) {
+		## file doesn't exist, but can be transferred from remote
 		origin <- readLines(file.path(cachedir, "origin"))
 		dbfile <- file.path(dbdir(origin), basename(file))
 	}
