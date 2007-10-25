@@ -270,11 +270,12 @@ runExpression <- function(expr, exprFile) {
 			updateForceEvalList(expr)
 		}
 	}
-	if(!forceEval)
+	else {
 		logMessage("  -- loading expr from cache")
-	objects <- cacheLazyLoad(exprFile, globalenv())
-	setConfig("new.objects", objects)
-	invisible(objects)
+		keys <- cacheLazyLoad(exprFile, globalenv())
+	}
+	setConfig("new.objects", keys)
+	invisible(keys)
 }
 
 exprFileName <- function(expr, history) {
@@ -393,6 +394,8 @@ evalAndCache <- function(expr, exprFile) {
 	})
 	if(inherits(status, "condition"))
 		stop(status)
+	if(length(keys) > 0)
+		copy2env(keys, env, globalenv())
 	keys
 }
 
