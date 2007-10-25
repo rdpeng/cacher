@@ -147,8 +147,10 @@ cc <- function(expr, cachedir = ".cache", srcfile = NULL, ...) {
 cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 	exprList <- parse(srcfile, srcfile = NULL)
 
-	mkdirs(cachedir)
-
+	if(!file.exists(cachedir)) {
+		vmessage(gettextf("creating cache directory '%s'", cachedir))
+		mkdirs(cachedir)
+	}
 	file.create(metafile(srcfile))
 	setConfig("metadata", metafile(srcfile))
 
