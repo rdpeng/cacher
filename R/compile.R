@@ -184,7 +184,7 @@ cacher <- function(srcfile, cachedir = ".cache", logfile = NULL) {
 
 writeLocaleInfo <- function() {
 	locale <- Sys.getlocale()
-	writeLines(locale, file.path(cache(), "locale")
+	writeLines(locale, file.path(cache(), "locale"))
 }
 
 updateDBFileList <- function() {
