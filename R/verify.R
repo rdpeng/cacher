@@ -1,7 +1,7 @@
 ################################################################################
 ## Code for verifying/checking an analysis
 
-checkobjects <- function(obj, env, checkenv) {
+compare_objects <- function(obj, env, checkenv) {
 	if(length(obj) == 0) {
 		message("= no objects to check, OK")
 		return(NULL)
@@ -75,7 +75,7 @@ checkcode <- function(num, env = globalenv()) {
 		if(!inherits(status, "condition")) {
 			obj <- strsplit(meta[i, "objects"], ";",
 					fixed = TRUE)[[1]]
-			checkobjects(obj, env, checkenv)
+			compare_objects(obj, env, checkenv)
 		}
 	}
 }
@@ -90,7 +90,7 @@ forceDownload <- function(objectList, env) {
 ################################################################################
 ## Verify objects against their hashes
 
-verify <- function(num) {
+checkobjects <- function(num) {
 	cachedir <- cache()
 	srcfile <- checkSourceFile()
 	meta <- read.dcf(metafile(srcfile))
