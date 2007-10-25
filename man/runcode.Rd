@@ -8,7 +8,7 @@
 }
 \usage{
 runcode(num, env = parent.frame(), forceAll = FALSE)
-checkcode(num, env = parent.frame())
+checkcode(num, env = globalenv())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
