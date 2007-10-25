@@ -90,7 +90,7 @@ forceDownload <- function(objectList, env) {
 ################################################################################
 ## Verify objects against their hashes
 
-verifyObject <- function(num) {
+verify <- function(num) {
 	cachedir <- cache()
 	srcfile <- checkSourceFile()
 	meta <- read.dcf(metafile(srcfile))
@@ -104,22 +104,22 @@ verifyObject <- function(num) {
 
 		if(length(objects) == 0)
 			next
-		filename <- file.path(cachedir, dbdir(cachedir),
-				      meta[i, "exprID"])
+		filename <- file.path(dbdir(cachedir), meta[i, "exprID"])
 		testenv <- new.env(parent = emptyenv())
 		cacheLazyLoad(filename, testenv)
 
 		con <- gzfile(filename, "rb")
 		tryCatch({
 			index <- unserialize(con)
-			hash <- unserialize(con)
+			hashVector <- unserialize(con)
 		}, finally = {
 			if(isOpen(con))
 				close(con)
 		})
 		valid <- sapply(seq_along(objects), function(j) {
 			obj <- get(objects[j], testenv)
-			identical(hash[objects[j]], hash(obj))
+			stored_hash <- as.character(hashVector[objects[j]]) 
+			identical(stored_hash, hash(obj))
 		})
 		names(valid) <- objects
 		check[[i]] <- valid
