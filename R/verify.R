@@ -104,26 +104,47 @@ checkobjects <- function(num) {
 
 		if(length(objects) == 0)
 			next
+		vmessage("checking expression ", i)
+
 		filename <- file.path(dbdir(cachedir), meta[i, "exprID"])
 		testenv <- new.env(parent = emptyenv())
-		cacheLazyLoad(filename, testenv)
 
-		con <- gzfile(filename, "rb")
-		tryCatch({
+		con <- gzfile(filename, "rb")		
+		status <- tryCatch({
+			cacheLazyLoad(filename, testenv)
 			index <- unserialize(con)
 			hashVector <- unserialize(con)
+			TRUE
+		}, error = function(cond) {
+			vmessage("- problem checking objects")
+			cond
 		}, finally = {
 			if(isOpen(con))
 				close(con)
 		})
-		valid <- sapply(seq_along(objects), function(j) {
+		if(inherits(status, "condition")) {
+			check[[i]] <- logical(length(objects))
+			next
+		}
+		valid <- logical(length(objects))
+		
+		for(j in seq_along(objects)) {
 			obj <- get(objects[j], testenv)
 			stored_hash <- as.character(hashVector[objects[j]]) 
-			identical(stored_hash, hash(obj))
-		})
+			valid[j] <- identical(stored_hash, hash(obj))
+
+			msg <- gettextf("%s object '%s' %s",
+					ifelse(valid[j], "+", "-"), objects[j],
+					ifelse(valid[j], "OK", "not verified"))
+			vmessage(msg)
+		}
 		names(valid) <- objects
 		check[[i]] <- valid
 	}
 	use <- !sapply(check, is.null)
-	check[use]
+	check <- check[use]
+
+	message(sprintf("%d of %d objects verified", sum(unlist(check)),
+			length(unlist(check))))
+	invisible(check[use])
 }
