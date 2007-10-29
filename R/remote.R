@@ -31,7 +31,21 @@ getIDdir <- function(id) {
 		  substring(id, SUFFIX_BEGIN))
 }
 
+matchPkgID <- function(id) {
+	baseurl <- getConfig("archive")
+	digestList <- readLines(file.path(baseurl, "cpkg", "PKG_DIGESTS"))
+	idx <- pmatch(id, digestList)
+
+	if(is.na(idx))
+		stop(gettextf("exact match not found for '%s'", id))
+	digestList[idx]
+}
+
 packageArchive <- function(id) {
+	if(length(id) > 1)
+		stop("only one 'id' can be cloned at a time")
+	if(nchar(id) < 40)
+		id <- matchPkgID(id)
 	baseurl <- getConfig("archive")
 	
 	if(is.null(baseurl))
