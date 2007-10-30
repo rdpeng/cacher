@@ -109,7 +109,7 @@ createLogFile <- function(cachedir, logfile, srcfile) {
 
 identicalFiles <- function(x, y) {
 	## Are the contents of the two files the same?
-	checksum <- as.character(md5sum(c(x, y)))
+	checksum <- c(sha1_file(x), sha1_file(y))
 	identical(checksum[1], checksum[2])
 }
 
@@ -286,11 +286,11 @@ exprFileName <- function(expr, history) {
 
 hashFile <- function(filename) {
 	stopifnot(length(filename) == 1)
-	digest(filename, algo = "sha1", file = TRUE)
+	sha1_file(filename)
 }
 
 hash <- function(object) {
-	digest(object, algo = "sha1")
+	sha1(object, skip = 14L)
 }
 
 hashExpr <- function(expr, history) {

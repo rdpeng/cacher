@@ -19,6 +19,5 @@ export(
        "showcode"
        )
 
-importFrom(digest, "digest")
 import(utils)
-importFrom(tools, "md5sum")
+useDynLib(cacher)
