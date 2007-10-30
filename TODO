@@ -3,5 +3,3 @@
 * Interface for applications other than R
 
 * Annotation: tagging, forcing evaluation, figures/tables
-
-* Internal hash function instead of relying on 'digest'
