@@ -4,3 +4,7 @@ sha1 <- function(object, skip = 0L) {
 	bytes <- serialize(object, NULL)
 	.Call("sha1_object", bytes, as.integer(skip))
 }
+
+sha1_file <- function(filename, skip = 0L) {
+	.Call("sha1_file", filename, skip)
+}
