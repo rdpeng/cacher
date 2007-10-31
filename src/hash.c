@@ -11,14 +11,14 @@
 SEXP sha1_object(SEXP object, SEXP skip_bytes)
 {
 	char output[41];  /* SHA-1 is 40 bytes + '\0' */
-	Rbyte *data;
-	int nChar, i, skip;
+	int i, skip;
 	SEXP result;
 	sha1_context ctx;
 	unsigned char buffer[20];
+	Rbyte *data = RAW(object);
+	int nChar = length(object);
 
-	data = RAW(object);
-	nChar = length(object);
+	PROTECT(skip_bytes = coerceVector(skip_bytes, INTSXP));
 	skip = INTEGER(skip_bytes)[0];
 	
 	if(skip > 0) {
@@ -38,7 +38,7 @@ SEXP sha1_object(SEXP object, SEXP skip_bytes)
 	}
 	PROTECT(result = allocVector(STRSXP, 1));
 	SET_STRING_ELT(result, 0, mkChar(output));
-	UNPROTECT(1);
+	UNPROTECT(2);
 
 	return result;
 }
