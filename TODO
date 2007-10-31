@@ -3,3 +3,5 @@
 * Interface for applications other than R
 
 * Annotation: tagging, forcing evaluation, figures/tables
+
+* Error correction for cache database?
