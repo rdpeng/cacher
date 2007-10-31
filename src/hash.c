@@ -67,9 +67,9 @@ SEXP sha1_file(SEXP filename, SEXP skip_bytes)
 		fseek(fp, skip, SEEK_SET);
 	sha1_starts(&ctx);
 
-	while((nChar = fread(buf, 1, sizeof(buf), fp)) > 0) {
+	while((nChar = fread(buf, 1, sizeof(buf), fp)) > 0)
 		sha1_update(&ctx, buf, nChar);
-	}
+
 	fclose(fp);
 	sha1_finish(&ctx, sha1sum);
 	
