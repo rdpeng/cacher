@@ -59,10 +59,8 @@ SEXP sha1_file(SEXP filename, SEXP skip_bytes)
 
 	skip = INTEGER(skip_bytes)[0];
 
-	if(!(fp = fopen(CHAR(STRING_ELT(filename, 0)), "rb"))) {
+	if(!(fp = fopen(CHAR(STRING_ELT(filename, 0)), "rb"))) 
 		error("unable to open input file");
-		return R_NilValue;
-	}
 	if (skip > 0) 
 		fseek(fp, skip, SEEK_SET);
 	sha1_starts(&ctx);
