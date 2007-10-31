@@ -33,9 +33,9 @@ SEXP sha1_object(SEXP object, SEXP skip_bytes)
 	sha1_update(&ctx, (uint8 *) data, nChar);
 	sha1_finish(&ctx, buffer);
 
-	for(i=0; i < 20; i++) {
+	for(i=0; i < 20; i++)
 		sprintf(output + i * 2, "%02x", buffer[i]);
-	}
+
 	PROTECT(result = allocVector(STRSXP, 1));
 	SET_STRING_ELT(result, 0, mkChar(output));
 	UNPROTECT(2);
@@ -73,9 +73,9 @@ SEXP sha1_file(SEXP filename, SEXP skip_bytes)
 	fclose(fp);
 	sha1_finish(&ctx, sha1sum);
 	
-	for(i=0; i < 20; i++) {
+	for(i=0; i < 20; i++)
 		sprintf(output + i * 2, "%02x", sha1sum[i]);
-	}
+
 	PROTECT(result = allocVector(STRSXP, 1));
 	SET_STRING_ELT(result, 0, mkChar(output));
 	UNPROTECT(3);
