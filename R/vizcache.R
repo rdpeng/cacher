@@ -5,7 +5,7 @@ cache <- function() {
 	getConfig("cachedir")
 }
 
-clearcache <- function(cachedir = NULL) {
+deletecache <- function(cachedir = NULL) {
 	if(is.null(cachedir))
 		cachedir <- cache()
 	if(!is.character(cachedir) || is.null(cachedir))

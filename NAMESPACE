@@ -16,7 +16,7 @@ export(
        "checkcode",
        "pkgupload",
        "checkobjects",
-       "clearcache",
+       "deletecache",
        "showcode"
        )
 

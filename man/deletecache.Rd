@@ -1,12 +1,12 @@
-\name{clearcache}
-\alias{clearcache}
+\name{deletecache}
+\alias{deletecache}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Delete the cache}
 \description{
   This function clears the entire cache by deleting the cache directory
 }
 \usage{
-clearcache(cachedir = NULL)
+deletecache(cachedir = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
