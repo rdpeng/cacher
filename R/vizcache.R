@@ -5,6 +5,14 @@ cache <- function() {
 	getConfig("cachedir")
 }
 
+deletecache <- function(cachedir = NULL) {
+	if(is.null(cachedir))
+		cachedir <- cache()
+	if(!is.character(cachedir) || is.null(cachedir))
+		stop("cache directory not found")
+	unlink(cachedir, recursive = TRUE)
+}
+
 sourcefile <- function(srcfile = NULL) {
 	cachedir <- cache()
 
