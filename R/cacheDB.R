@@ -45,6 +45,15 @@ isEmptyIndex <- function(idx) {
 	isTRUE(length(idx) == 0)
 }
 
+validConnection <- function(con) {
+	tryCatch({
+		summary(con)
+		TRUE
+	}, error = function(err) {
+		FALSE
+	})
+}
+
 cacheLazyLoad <- function(file, envir = parent.frame()) {
 	cachedir <- cache()
 
@@ -63,7 +72,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
 	index <- tryCatch({
 		unserialize(dbcon)
 	}, finally = {
-		if(isOpen(dbcon))
+		if(validConnection(dbcon) && isOpen(dbcon))
 			close(dbcon)
 	})
 	if(isEmptyIndex(index))
