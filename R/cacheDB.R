@@ -29,7 +29,6 @@ writeIndex <- function(byteList, con) {
 		lens <- sapply(byteList, function(x) length(x$bytes))
 		index <- c(0, cumsum(lens)[-length(byteList)])
 		names(index) <- sapply(byteList, "[[", "key")
-
 	}
 	else
 		index <- integer(0)
