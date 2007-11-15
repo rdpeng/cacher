@@ -96,9 +96,12 @@ checkSourceFile <- function() {
 		sourcefile(showfiles())
 		getConfig("srcfile")
 	}
-	else
+	else {
+		available.files <- showfiles()
 		stop("set source file with 'sourcefile'; ",
-		     "use 'showfiles()' to see available files")
+		     "available files are\n\t",
+		     paste(available.files, collapse = ", "))
+	}
 }
 
 code <- function(num = NULL, full = FALSE) {
