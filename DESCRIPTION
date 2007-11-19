@@ -1,7 +1,7 @@
 Package: cacher
 Title: Tools for caching and distributing statistical analyses
-Version: 0.1
-Date: 2007-11-26
+Version: 0.1-1
+Date: 2007-11-19
 Depends: R (>= 2.6.0)
 Imports: digest, utils, tools
 Suggests: RCurl
