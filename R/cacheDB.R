@@ -29,7 +29,6 @@ writeIndex <- function(byteList, con) {
 		lens <- sapply(byteList, function(x) length(x$bytes))
 		index <- c(0, cumsum(lens)[-length(byteList)])
 		names(index) <- sapply(byteList, "[[", "key")
-
 	}
 	else
 		index <- integer(0)
@@ -44,6 +43,15 @@ writeData <- function(byteList, con) {
 
 isEmptyIndex <- function(idx) {
 	isTRUE(length(idx) == 0)
+}
+
+validConnection <- function(con) {
+	tryCatch({
+		summary(con)
+		TRUE
+	}, error = function(err) {
+		FALSE
+	})
 }
 
 cacheLazyLoad <- function(file, envir = parent.frame()) {
@@ -64,7 +72,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
 	index <- tryCatch({
 		unserialize(dbcon)
 	}, finally = {
-		if(isOpen(dbcon))
+		if(validConnection(dbcon) && isOpen(dbcon))
 			close(dbcon)
 	})
 	if(isEmptyIndex(index))
