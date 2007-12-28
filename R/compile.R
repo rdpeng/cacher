@@ -109,7 +109,7 @@ createLogFile <- function(cachedir, logfile, srcfile) {
 
 identicalFiles <- function(x, y) {
 	## Are the contents of the two files the same?
-	checksum <- as.character(md5sum(c(x, y)))
+        checksum <- c(hashFile(x), hashFile(y))
 	identical(checksum[1], checksum[2])
 }
 
