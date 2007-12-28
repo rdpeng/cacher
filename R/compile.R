@@ -219,8 +219,6 @@ abbreviateExpr <- function(expr) {
 }
 
 writeMetadata <- function(expr, srcfile, exprFile) {
-        
-        
         entry <- data.frame(srcfile = srcfile,
                             expr = abbreviateExpr(expr),
                             objects = paste(getConfig("new.objects"),collapse=";"),
