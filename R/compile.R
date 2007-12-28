@@ -285,7 +285,8 @@ exprFileName <- function(expr, history) {
 }
 
 hashFile <- function(filename) {
-	stopifnot(length(filename) == 1)
+        if(length(filename) != 1)
+                stop("only pass a single file name to 'hashFile'")
 	digest(filename, algo = "sha1", file = TRUE)
 }
 
