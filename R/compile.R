@@ -344,9 +344,9 @@ isNewOrModified <- function(symbolnames, e1, e2) {
         })
 }
 
-## If 'source()' was used, there may be new symbols in the global
-## environment, unless 'source(local = TRUE)' was used.  Also applies
-## for 'set.seed()'.
+## If 'source()' was used (or a similar function like 'set.seed'),
+## there may be new symbols in the global environment.  Check for new
+## symbols and return a character vector of symbol names.
 
 checkNewSymbols <- function(e1, e2) {
         if(identical(e1, e2))
@@ -371,7 +371,12 @@ checkNewSymbols <- function(e1, e2) {
 ## works with promises.
 
 evalAndCache <- function(expr, exprFile) {
+        ## Evaluation environment
         env <- new.env(parent = globalenv())
+
+        ## Make a copy of the global env before evaluating 'expr';
+        ## then check 'before' and 'after' to see if anything new has
+        ## been created.        
         before <- copyEnv(globalenv())
         out <- withVisible({
                 eval(expr, env, globalenv())
@@ -381,7 +386,7 @@ evalAndCache <- function(expr, exprFile) {
         after <- copyEnv(globalenv())
 
         ## Functions like 'source' and 'set.seed' alter the global
-        ## environment, so check after evaluation
+        ## environment, so check for new symbols after evaluation.        
         new.global <- checkNewSymbols(before, after)
         copy2env(new.global, globalenv(), env)
 
@@ -401,6 +406,12 @@ evalAndCache <- function(expr, exprFile) {
                 copy2env(keys, env, globalenv())
         keys
 }
+
+## This is a catch-all function to check for objects that we do not
+## want to cache.  Currently, connections are the only things we do
+## not cache.  If a non-cacheable object is found, then we actually
+## cannot cache the entire expression and the expression needs to be
+## evaluated each time.
 
 checkNonCacheable <- function(keys, env) {
         for(k in keys) {
