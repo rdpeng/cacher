@@ -7,7 +7,7 @@ clonecache <- function(origin, cachedir = ".cache", all.files = FALSE, id = NULL
         if(!is.null(id))
                 origin <- packageArchive(id)
         mkdirs(cachedir)
-        message("created cache directory ", cachedir)
+        message(gettextf("created cache directory '%s'", cachedir))
         setConfig("cachedir", cachedir)
         initDownload(origin)
         writeLines(origin, file.path(cachedir, "origin"))
