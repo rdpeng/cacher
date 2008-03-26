@@ -56,20 +56,31 @@ packageArchive <- function(id) {
 
 downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
                             origin = NULL) {
-        vmessage("downloading cache database files")
+        cat("Starting download of cache database files\n")
+        cat(gettext("Counting files: "))
         dbfiles <- readLines(file.path(cachedir, "dbfiles"))
 
         if(is.null(origin))
                 origin <- readLines(file.path(cachedir, "origin"))
+        nfiles <- length(dbfiles)
+
+        cat(nfiles, "\n", sep = "")
+        cat(gettext("Downloading files: "))
+
         for(i in seq_along(dbfiles)) {
+                msg <- sprintf("%d%% (%d/%d)", round(100 * i / nfiles),
+                               i, nfiles)
+                cat(msg)
                 src <- file.path(dbdir(origin), dbfiles[i])
                 dest <- file.path(dbdir(cachedir), dbfiles[i])
 
-                if(file.exists(dest) && skip.existing)
-                        next
-                download(src, dest)
+                if(!(file.exists(dest) && skip.existing))
+                        download(src, dest)
+                back <- paste(rep("\b", nchar(msg)), collapse = "")
+                cat(back)
         }
-        vmessage("\nfinished")
+        cat("\n")
+        cat("Done.\n")
 }
 
 isClone <- function() {
@@ -107,7 +118,7 @@ initDownload <- function(id) {
 
         vmessage("downloading source file list")
         download(file.path(id, "srcfiles"), file.path(cachedir, "srcfiles"),
-                   mode = "w")
+                 mode = "w")
         srcfiles <- readLines(file.path(cachedir, "srcfiles"))
 
         for(srcfile in srcfiles) {
