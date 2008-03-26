@@ -121,6 +121,7 @@ download <- function(url, destfile, method = "auto", quiet = TRUE,
                 if(status > 0)
                         warning("problem downloading file ", url)
         }
+        status
 }
 
 initDownload <- function(id) {
