@@ -102,14 +102,25 @@ download <- function(url, destfile, method = "auto", quiet = TRUE,
         isLocal <- length(grep("^\\w+://", url, perl = TRUE)) == 0
         isFileURL <- length(grep("^file://", url, perl = TRUE)) > 0
 
-        if(isLocal)
-                file.copy(url, destfile, overwrite = TRUE)
+        if(isLocal) {
+                status <- file.copy(url, destfile, overwrite = TRUE)
+
+                if(!status)
+                        warning("problem copying file ", url)
+        }
         else if(isFileURL) {
                 url <- sub("^file://", "", url, perl = TRUE)
-                file.copy(url, destfile, overwrite = TRUE)
+                status <- file.copy(url, destfile, overwrite = TRUE)
+
+                if(!status)
+                        warning("problem copying file ", url)
         }
-        else
-                download.file(url, destfile, method, quiet, mode, cacheOK)
+        else {
+                status <- download.file(url, destfile, method, quiet,
+                                        mode, cacheOK)
+                if(status > 0)
+                        warning("problem downloading file ", url)
+        }
 }
 
 initDownload <- function(id) {
