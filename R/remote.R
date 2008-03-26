@@ -74,8 +74,17 @@ downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
                 src <- file.path(dbdir(origin), dbfiles[i])
                 dest <- file.path(dbdir(cachedir), dbfiles[i])
 
-                if(!(file.exists(dest) && skip.existing))
+                if(!(file.exists(dest) && skip.existing)) {
+                        start <- proc.time()
                         download(src, dest, mode = "wb")
+                        end <- proc.time()
+                        diff <- end - start
+
+                        ## This is a cheap hack to prevent the server
+                        ## from being hammered by repeated requests
+                        if(diff["elapsed"] < 0.1)
+                                Sys.sleep(0.25)
+                }
                 back <- paste(rep("\b", nchar(msg)), collapse = "")
                 cat(back)
         }
