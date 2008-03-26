@@ -80,7 +80,6 @@ downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
                 cat(back)
         }
         cat("\n")
-        cat("Done.\n")
 }
 
 isClone <- function() {
