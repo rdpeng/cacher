@@ -75,7 +75,7 @@ downloadCacheDB <- function(cachedir = ".cache", skip.existing = TRUE,
                 dest <- file.path(dbdir(cachedir), dbfiles[i])
 
                 if(!(file.exists(dest) && skip.existing))
-                        download(src, dest)
+                        download(src, dest, mode = "wb")
                 back <- paste(rep("\b", nchar(msg)), collapse = "")
                 cat(back)
         }
