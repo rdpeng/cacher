@@ -173,17 +173,18 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
                 if(!forceEval[i] && !forceAll) {
                         vmessage("loading cache for expression ", i)
                         loadcache(i, env)
+                        next
                 }
-                else {
-                        expr <- exprList[i]
-                        vmessage("evaluating expression ", i)
-                        tryCatch({
-                                eval(expr, env, globalenv())
-                        }, error = function(err) {
-                                vmessage("ERROR: unable to evaluate expression")
-                                vmessage(conditionMessage(err))
-                        })
-                }
+                expr <- exprList[i]
+                vmessage("evaluating expression ", i)
+
+                tryCatch({
+                        eval(expr, env, globalenv())
+                }, error = function(err) {
+                        vmessage("ERROR: unable to evaluate expression")
+                        vmessage(conditionMessage(err))
+                        err
+                })
         }
 }
 
