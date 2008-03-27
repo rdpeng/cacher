@@ -1,5 +1,7 @@
 * Tools/framework for editing analyses and re-running them
 
+* Better visualization tools
+
 * Interface for applications other than R
 
 * Annotation: tagging, forcing evaluation, figures/tables
