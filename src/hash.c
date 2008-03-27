@@ -5,7 +5,8 @@
 
 /* 
  * This code is adapted from the 'digest.c' code in the 'digest'
- * package
+ * package by Dirk Eddelbuettel <edd@debian.org> with contributions by
+ * Antoine Lucas, Jarek Tuszynski, Henrik Bengtsson and Simon Urbanek
  */
 
 SEXP sha1_object(SEXP object, SEXP skip_bytes)
