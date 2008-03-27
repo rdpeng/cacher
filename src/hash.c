@@ -1,6 +1,5 @@
 #include <R.h>
 #include <Rinternals.h>
-#include <Rdefines.h>
 #include "sha1.h"
 
 /* 
