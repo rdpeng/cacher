@@ -285,11 +285,11 @@ exprFileName <- function(expr, history) {
 hashFile <- function(filename) {
         if(length(filename) != 1)
                 stop("only pass a single file name to 'hashFile'")
-        digest(filename, algo = "sha1", file = TRUE)
+        sha1_file(filename)
 }
 
 hash <- function(object) {
-        digest(object, algo = "sha1")
+        sha1(object)
 }
 
 hashExpr <- function(expr, history) {
