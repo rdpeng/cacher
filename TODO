@@ -1,5 +1,7 @@
 * Tools/framework for editing analyses and re-running them
 
+* More comprehensive look at interrupt handling
+
 * Better visualization tools
 
 * Interface for applications other than R
