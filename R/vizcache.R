@@ -152,6 +152,7 @@ loadcache <- function(num, env = parent.frame()) {
 }
 
 runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
+        force(env)
         cachedir <- cache()
         srcfile <- checkSourceFile()
         
@@ -178,13 +179,15 @@ runcode <- function(num, env = parent.frame(), forceAll = FALSE) {
                 expr <- exprList[i]
                 vmessage("evaluating expression ", i)
 
-                tryCatch({
-                        eval(expr, env, globalenv())
+                status <- tryCatch({
+                        withVisible(eval(expr, env, globalenv()))
                 }, error = function(err) {
                         vmessage("ERROR: unable to evaluate expression")
                         vmessage(conditionMessage(err))
                         err
                 })
+                if(!inherits(status, "condition") && status$visible)
+                        print(status$value)
         }
 }
 
