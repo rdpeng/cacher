@@ -15,9 +15,11 @@ SEXP sha1_object(SEXP object, SEXP skip_bytes)
 	SEXP result;
 	sha1_context ctx;
 	unsigned char buffer[20];
-	Rbyte *data = RAW(object);
+	Rbyte *data;
 	int nChar = length(object);
 
+	PROTECT(object = coerceVector(object, RAWSXP));
+	data = RAW(object);
 	PROTECT(skip_bytes = coerceVector(skip_bytes, INTSXP));
 	skip = INTEGER(skip_bytes)[0];
 	
@@ -38,7 +40,7 @@ SEXP sha1_object(SEXP object, SEXP skip_bytes)
 
 	PROTECT(result = allocVector(STRSXP, 1));
 	SET_STRING_ELT(result, 0, mkChar(output));
-	UNPROTECT(2);
+	UNPROTECT(3);
 
 	return result;
 }
