@@ -62,9 +62,13 @@ checkcode <- function(num, env = globalenv()) {
                         message("- problem evaluating expression, FAILED")
                         msg <- conditionMessage(cond)
 
-                        if(length(msg) > 0)
-                                vmessage(gettextf("- %s: '%s'",
-                                                 class(cond)[1], msg))
+                        if(length(msg) > 0) {
+                                prntmsg <- gettextf("%s: %s", class(cond)[1],
+                                                    msg)
+                                prntmsg <- paste(strwrap(prntmsg, prefix = "- "),
+                                                 collapse = "\n")
+                                vmessage(prntmsg)
+                        }
                         if(!forceEval[i]) {
                                 vmessage("- loading objects from cache")
                                 obj <- loadcache(i, env)
