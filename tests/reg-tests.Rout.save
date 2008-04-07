@@ -1,0 +1,42 @@
+
+R version 2.7.0 alpha (--)
+Copyright (C)  The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ## Check the hashing function against 'digest'
+> 
+> library(digest)
+> 
+> set.seed(1)
+> x <- rnorm(1000)
+> 
+> (d1 <- cacher:::sha1(x))
+[1] "bad2ec258d6502bddf44e71939857bb55094634c"
+> (d2 <- digest(x, "sha1"))
+[1] "bad2ec258d6502bddf44e71939857bb55094634c"
+> 
+> stopifnot(identical(d1, d2))
+> 
+> x <- 1:1000
+> 
+> write(x, file = "testdata")
+> 
+> (d1 <- cacher:::sha1_file("testdata"))
+[1] "ff23691768fa566b8f337953232c7cd10410c982"
+> (d2 <- digest("testdata", algo = "sha1", file = TRUE))
+[1] "ff23691768fa566b8f337953232c7cd10410c982"
+> 
+> stopifnot(identical(d1, d2))
+> 
