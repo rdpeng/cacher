@@ -46,7 +46,7 @@ showfiles <- function() {
         sf
 }
 
-showExpressions <- function(num, srcref) {
+showExpressions <- function(num, srcref, full = FALSE) {
         tfile <- tempfile()
         con <- file(tfile, "w")
         on.exit(close(con))
@@ -69,7 +69,13 @@ showExpressions <- function(num, srcref) {
                 }
                 else
                         indent <- exprnum
-                writeLines(paste(indent, expr, sep = "  "), con)
+                line <- paste(indent, expr, sep = "  ")
+                width <- getOption("width")
+
+                if(!full && nchar(line) > width && width > 20)
+                        line <- paste(substr(line, 1, width - 3),
+                                      "...", sep = "")
+                writeLines(line, con)
         }
         close(con)
         on.exit()
@@ -117,7 +123,7 @@ code <- function(num = NULL, full = FALSE) {
         }
         else
                 expr.print <- attr(exprList, "srcref")
-        showExpressions(num, expr.print)
+        showExpressions(num, expr.print, full)
 }
 
 showobjects <- function(num) {
