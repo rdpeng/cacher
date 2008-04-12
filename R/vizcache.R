@@ -19,11 +19,7 @@ sourcefile <- function(srcfile = NULL) {
         ## Get it
         if(is.null(srcfile)) {
                 sf <- getConfig("srcfile")
-
-                if(is.null(sf))
-                        return(sf)
-                else
-                        return(basename(sf))
+                return(basename(as.character(sf)))
         }
         ## Set it
         cache.srcfile <- file.path(srcdir(cachedir), basename(srcfile))
