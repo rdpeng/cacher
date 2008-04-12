@@ -25,8 +25,8 @@ package <- function(cachedir) {
         cmd <- paste("zip -r -X", name, basename(cachedir))
         out <- system(cmd, intern = TRUE)
         
-        checksum <- hashFile(name)
-        newname <- paste("./cpkg-", checksum, ".zip", sep = "")
+        pkgdigest <- packageDigest(cachedir)
+        newname <- paste("./cpkg-", pkgdigest, ".zip", sep = "")
         message(gettextf("creating package '%s'", basename(newname)))
 
         if(file.exists(newname))
@@ -42,6 +42,18 @@ package <- function(cachedir) {
                         warning("problem removing temporary file")
         }
         invisible(basename(newname))
+}
+
+packageDigest <- function(cachedir) {
+        srcfiles <- file.path(srcdir(cachedir), readLines(file.path(cachedir, "srcfiles")))
+        tmp <- tempfile()
+        status <- file.copy(file.path(cachedir, "dbfiles"), tmp)
+
+        for(sf in srcfiles)
+                status <- status && file.append(tmp, sf)
+        if(!status)
+                stop("unable to create package digest")
+        hashFile(tmp)
 }
 
 ################################################################################
