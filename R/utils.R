@@ -1,5 +1,5 @@
-## Package files are of the form 'cpkg-<40 char checksum>.zip'.  In
-## order to extract the checksum/ID from the file name, we need to
+## Package files are of the form 'cpkg-<40 char SHA-1 digest>.zip'.
+## In order to extract the digest/ID from the file name, we need to
 ## substring starting at 6 and ending at 6 + 40 - 1.  This is only
 ## true because we use SHA1 checksums
 
