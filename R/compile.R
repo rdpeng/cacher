@@ -86,6 +86,9 @@ mkdirs <- function(cachedir) {
         dir.create(logdir(cachedir), showWarnings = FALSE, recursive = TRUE)
         dir.create(metadir(cachedir), showWarnings = FALSE, recursive = TRUE)
         dir.create(tagdir(cachedir), showWarnings = FALSE, recursive = TRUE)
+
+        if(!file.exists(cachedir))
+                stop(gettextf("unable to create cache directory '%s'", cachedir))
 }
 
 tagdir <- function(cachedir) file.path(cachedir, "tag")

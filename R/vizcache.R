@@ -98,15 +98,20 @@ checkSourceFile <- function() {
         
         if(!is.null(srcfile))
                 srcfile
-        else if(is.null(srcfile) && length(showfiles()) == 1) {
-                sourcefile(showfiles())
-                getConfig("srcfile")
-        }
         else {
                 available.files <- showfiles()
-                stop("set source file with 'sourcefile'; ",
-                     "available files are\n\t",
-                     paste(available.files, collapse = ", "))
+
+                if(length(available.files) == 1) {
+                        sourcefile(available.files)
+                        getConfig("srcfile")
+                }
+                else if(length(available.files) > 1) {
+                        stop("set source file with 'sourcefile'; ",
+                             "available files are\n\t",
+                             paste(available.files, collapse = ", "))
+                }
+                else
+                        stop("no source files available")
         }
 }
 
