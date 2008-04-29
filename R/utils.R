@@ -46,13 +46,13 @@ package <- function(cachedir) {
 
 ################################################################################
 
-pkgupload <- function(pkgname) {
-        if(!require(RCurl))
-                stop("'RCurl' required for uploading cache packages")
-        message(gettextf("uploading cache package '%s'", pkgname))
-
-        fileInfo <- fileUpload(normalizePath(pkgname))
-        uploadscript <- getConfig("uploadscript")
-        out <- postForm(uploadscript, cpkgfile = fileInfo)
-        invisible(out)
-}
+## pkgupload <- function(pkgname) {
+##         if(!require(RCurl))
+##                 stop("'RCurl' required for uploading cache packages")
+##         message(gettextf("uploading cache package '%s'", pkgname))
+## 
+##         fileInfo <- fileUpload(normalizePath(pkgname))
+##         uploadscript <- getConfig("uploadscript")
+##         out <- postForm(uploadscript, cpkgfile = fileInfo)
+##         invisible(out)
+## }
