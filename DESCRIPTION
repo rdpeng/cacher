@@ -4,6 +4,7 @@ Version: 0.2
 Date: 2008-04-29
 Depends: R (>= 2.7.0)
 Imports: utils
+Suggests: digest
 Author: Roger D. Peng <rpeng@jhsph.edu>
 Maintainer: Roger D. Peng <rpeng@jhsph.edu>
 Description: This package provides tools for caching statistical analyses in key-value databases which can subsequently be distributed over the web.  
