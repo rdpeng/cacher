@@ -26,5 +26,4 @@ package(cachedir)
 \value{
   The name of the archive file created.
 }
-\seealso{\code{\link{pkgupload}}}
 \keyword{utilities}

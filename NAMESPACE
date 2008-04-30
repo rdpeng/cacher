@@ -14,7 +14,6 @@ export(
        "package",
        "clonecache",
        "checkcode",
-       "pkgupload",
        "checkobjects",
        "deletecache",
        "showcode"
