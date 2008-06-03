@@ -46,6 +46,14 @@ showfiles <- function() {
         sf
 }
 
+
+writeLinesWidth <- function(line, con = stdout(), sep = "\n",
+                           width = getOption("width")) {
+        if(nchar(line) > width && width > 20)
+                line <- paste(substr(line, 1, width - 3), "...", sep = "")
+        writeLines(line, con)
+}
+
 showExpressions <- function(num, srcref, full = FALSE) {
         tfile <- tempfile()
         con <- file(tfile, "w")
@@ -70,12 +78,11 @@ showExpressions <- function(num, srcref, full = FALSE) {
                 else
                         indent <- exprnum
                 line <- paste(indent, expr, sep = "  ")
-                width <- getOption("width")
 
-                if(!full && nchar(line) > width && width > 20)
-                        line <- paste(substr(line, 1, width - 3),
-                                      "...", sep = "")
-                writeLines(line, con)
+                if(!full)
+                        writeLinesWidth(line, con)
+                else
+                        writeLines(line, con)
         }
         close(con)
         on.exit()
