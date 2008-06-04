@@ -100,18 +100,9 @@ transferCacheFile <- function(cacheFile, cachedir) {
         if(file.exists(cacheFile))
                 return(NULL)
         msg <- gettext("/ transferring cache db file ", basename(cacheFile))
-        nc <- nchar(msg)
-        width <- getOption("width")
+        msg <- paste(msg, collapse = "")
+        msg <- truncateLine(msg)
 
-        if(sum(nc) > width) {  ## Message too long
-                if(nc[1] < (width - 10))
-                        msg[2] <- paste(substr(msg[2], 1, width - nc[1] - 3),
-                                        "...", sep = "")
-                else
-                        msg[2] <- ""
-        }
-        else
-                msg <- paste(msg, collapse = "")
         vmessage(msg)
         origin <- readLines(file.path(cachedir, "origin"))
         src <- file.path(dbdir(origin), basename(cacheFile))

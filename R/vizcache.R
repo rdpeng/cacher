@@ -44,11 +44,10 @@ showfiles <- function() {
 }
 
 
-writeLinesWidth <- function(line, con = stdout(), sep = "\n",
-                           width = getOption("width")) {
+truncateLine <- function(line, width = getOption("width")) {
         if(nchar(line) > width && width > 20)
                 line <- paste(substr(line, 1, width - 3), "...", sep = "")
-        writeLines(line, con)
+        line
 }
 
 showExpressions <- function(num, srcref, full = FALSE) {
@@ -77,9 +76,8 @@ showExpressions <- function(num, srcref, full = FALSE) {
                 line <- paste(indent, expr, sep = "  ")
 
                 if(!full)
-                        writeLinesWidth(line, con)
-                else
-                        writeLines(line, con)
+                        line <- truncateLine(line[1])
+                writeLines(line, con)
         }
         close(con)
         on.exit()
