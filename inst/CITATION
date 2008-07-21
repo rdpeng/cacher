@@ -1,0 +1,17 @@
+citHeader("To cite 'cacher' in publications use:")
+
+citEntry(entry = "Article",
+         title        = "Caching and Distributing Statistical Analyses in {R}",
+         author       = personList(as.person("Roger D. Peng")),
+         journal      = "Journal of Statistical Software",
+         year         = "2008",
+         volume       = "26",
+         number       = "7",
+         url          = "http://www.jstatsoft.org/v26/i07/",
+
+         textVersion  =
+         paste("Roger D. Peng (2008).",
+               "Caching and Distributing Statistical Analyses in R.",
+               "Journal of Statistical Software 26 (7).",
+               "URL http://www.jstatsoft.org/v26/i07/.")
+         )
