@@ -26,7 +26,7 @@
   describe the design and implementation of the \pkg{cacher} package
   and provide two examples of how the package can be used for
   reproducible research.  This vignette was originally published
-  as~\cite{peng:2008}
+  as~\cite{peng:2008}.
 }
 
 \Keywords{\proglang{R}, reproducible research, cached computation}
