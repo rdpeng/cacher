@@ -4,7 +4,7 @@ Version: 1.1
 Date: 2009-05-28
 Depends: R (>= 2.9.0)
 Imports: utils
-Suggests: digest, CodeDepends
+Suggests: digest, CodeDepends, Rgraphviz
 Author: Roger D. Peng <rpeng@jhsph.edu>
 Maintainer: Roger D. Peng <rpeng@jhsph.edu>
 Description: This package provides tools for caching statistical analyses in key-value databases which can subsequently be distributed over the web.  
