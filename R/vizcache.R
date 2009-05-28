@@ -120,7 +120,7 @@ showcode <- function() {
 checkSourceFile <- function() {
         srcfile <- getConfig("srcfile")
         
-        if(!is.null(srcfile))
+        if(!is.null(srcfile) && file.exists(srcfile))
                 srcfile
         else {
                 available.files <- showfiles()
