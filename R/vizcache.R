@@ -220,3 +220,7 @@ skipcode <- function(num, append = TRUE) {
                 setConfig("skipcode", sort(unique(c(current, num))))
         }
 }
+
+################################################################################
+## Use CodeDepends stuff
+
