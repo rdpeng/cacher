@@ -84,6 +84,28 @@ showExpressions <- function(num, srcref, full = FALSE) {
         file.show(tfile)
 }
 
+code <- function(num = NULL, full = FALSE) {
+        srcfile <- checkSourceFile()
+        exprList <- parse(srcfile)
+
+        if(is.null(num))
+                num <- seq_len(length(exprList))
+        if(!full) {
+                expr.print <- sapply(exprList, function(x) {
+                        deparse(x, width = getConfig("exprDeparseWidth"))[1]
+                })
+        }
+        else {
+                srcref <- attr(exprList, "srcref")
+                sf <- srcfile(srcfile)
+                expr.print <- lapply(seq_along(srcref), function(i) {
+                        n <- srcref[[i]]
+                        getSrcLines(sf, n[1], n[3])
+                })
+        }
+        showExpressions(num, expr.print, full)
+}
+
 metafile <- function(srcfile) {
         cachedir <- cache()
         file.path(metadir(cachedir),
@@ -115,22 +137,6 @@ checkSourceFile <- function() {
                 else
                         stop("no source files available")
         }
-}
-
-code <- function(num = NULL, full = FALSE) {
-        srcfile <- checkSourceFile()
-        exprList <- parse(srcfile)
-
-        if(is.null(num))
-                num <- seq_len(length(exprList))
-        if(!full) {
-                expr.print <- sapply(exprList, function(x) {
-                        deparse(x, width = getConfig("exprDeparseWidth"))[1]
-                })
-        }
-        else
-                expr.print <- attr(exprList, "srcref")
-        showExpressions(num, expr.print, full)
 }
 
 showobjects <- function(num) {
