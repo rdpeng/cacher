@@ -224,13 +224,16 @@ skipcode <- function(num, append = TRUE) {
 ################################################################################
 ## Use CodeDepends stuff
 
-graphcode <- function(...) {
+graphcode <- function(num, ...) {
         if(!require(CodeDepends))
                 stop("need 'CodeDepends' package to graph code")
         if(!require(Rgraphviz))
                 stop("need 'Rgraphviz' package to graph code")
         srcfile <- checkSourceFile()
-        doc <- readScript(srcfile)
-        gr <- makeVariableGraph(frags = doc)
+        doc <- readScript(srcfile, type = "R")
+
+        if(missing(num))
+                num <- seq_along(doc)
+        gr <- makeVariableGraph(frags = doc[num])
         plot(gr, ...)
 }
