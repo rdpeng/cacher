@@ -1,6 +1,7 @@
 export(
        "code",
        "graphcode",
+       "objectcode",
        "runcode",
        "skipcode",
        "loadcache",

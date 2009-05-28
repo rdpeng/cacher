@@ -238,3 +238,22 @@ graphcode <- function(num, ...) {
         gr <- makeVariableGraph(frags = doc[num])
         plot(gr, ...)
 }
+
+
+objectcode <- function(name, show = TRUE) {
+        if(!require(CodeDepends))
+                stop("need 'CodeDepends' package to graph code")
+        srcfile <- checkSourceFile()
+        doc <- readScript(srcfile, type = "R")
+        info <- as(doc, "ScriptInfo")
+        idxlist <- lapply(name, function(n) {
+                getDependsThread(n, info)
+        })
+        idx <- sort.int(unique(unlist(idxlist)))
+
+        if(!length(idx))
+                return(invisible(NULL))
+        if(show)
+                code(idx, full = TRUE)
+        invisible(idx)
+}
