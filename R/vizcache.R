@@ -240,12 +240,15 @@ graphcode <- function(num, ...) {
 }
 
 
-objectcode <- function(name, show = TRUE) {
+objectcode <- function(name, num, show = TRUE) {
         if(!require(CodeDepends))
                 stop("need 'CodeDepends' package to graph code")
         srcfile <- checkSourceFile()
         doc <- readScript(srcfile, type = "R")
-        info <- as(doc, "ScriptInfo")
+
+        if(missing(num))
+                num <- seq_along(doc)
+        info <- as(doc[num], "ScriptInfo")
         idxlist <- lapply(name, function(n) {
                 getDependsThread(n, info)
         })

@@ -11,14 +11,16 @@
   those R expressions in the document.
 }
 \usage{
-objectcode(name, show = TRUE)
+objectcode(name, num, show = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{name}{
     character vector of names of variables
   }
-  %%     ~~Describe \code{name} here~~
+  \item{num}{
+    a vector of expression sequence numbers
+  }
   \item{show}{
     Should the expressions be printed to the screen?
   }
