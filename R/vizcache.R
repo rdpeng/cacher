@@ -224,7 +224,7 @@ skipcode <- function(num, append = TRUE) {
 ################################################################################
 ## Use CodeDepends stuff
 
-graphcode <- function() {
+graphcode <- function(...) {
         if(!require(CodeDepends))
                 stop("need 'CodeDepends' package to graph code")
         if(!require(Rgraphviz))
@@ -232,5 +232,5 @@ graphcode <- function() {
         srcfile <- checkSourceFile()
         doc <- readScript(srcfile)
         gr <- makeVariableGraph(frags = doc)
-        plot(gr)
+        plot(gr, ...)
 }
