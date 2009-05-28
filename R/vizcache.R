@@ -11,6 +11,7 @@ deletecache <- function(cachedir = NULL) {
         if(!is.character(cachedir) || is.null(cachedir))
                 stop("cache directory not found")
         unlink(cachedir, recursive = TRUE)
+        setConfig("srcfile", NULL)
 }
 
 sourcefile <- function(srcfile = NULL) {
