@@ -2,6 +2,7 @@ export(
        "code",
        "graphcode",
        "objectcode",
+       "evalobject",
        "runcode",
        "skipcode",
        "loadcache",
