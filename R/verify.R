@@ -111,6 +111,9 @@ checkobjects <- function(num) {
                 vmessage("checking expression ", i)
 
                 filename <- file.path(dbdir(cachedir), meta[i, "exprID"])
+
+                if(!file.exists(filename))
+                        transferCacheFile(filename, cachedir)
                 testenv <- new.env(parent = emptyenv())
 
                 con <- gzfile(filename, "rb")                
@@ -123,7 +126,7 @@ checkobjects <- function(num) {
                         vmessage("- problem checking objects")
                         cond
                 }, finally = {
-                        if(isOpen(con))
+                        if(isCloseable(con))
                                 close(con)
                 })
                 if(inherits(status, "condition")) {
