@@ -54,6 +54,10 @@ validConnection <- function(con) {
         })
 }
 
+isCloseable <- function(con) {
+        validConnection(con) && isOpen(con)
+}
+
 cacheLazyLoad <- function(file, envir = parent.frame()) {
         cachedir <- cache()
 
@@ -72,7 +76,7 @@ cacheLazyLoad <- function(file, envir = parent.frame()) {
         index <- tryCatch({
                 unserialize(dbcon)
         }, finally = {
-                if(validConnection(dbcon) && isOpen(dbcon))
+                if(isCloseable(dbcon))
                         close(dbcon)
         })
         if(isEmptyIndex(index))
