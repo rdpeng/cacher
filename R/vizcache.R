@@ -271,3 +271,10 @@ evalobject <- function(name, num, env = parent.frame(), ...) {
         idx <- objectcode(name, num, show = FALSE)
         runcode(idx, env, ...)
 }
+
+loadobject <- function(name, num, env = parent.frame()) {
+        idx <- objectcode(name, num, show = FALSE)
+        i <- max(idx)
+        vmessage("loading cache for expression ", i)
+        loadcache(i, env)
+}

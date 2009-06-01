@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \alias{objectcode}
 \alias{evalobject}
+\alias{loadobject}
 
 \title{
   Show dependent R expressions for an object
@@ -15,6 +16,7 @@
 \usage{
 objectcode(name, num, show = TRUE)
 evalobject(name, num, env = parent.frame(), ...)
+loadobject(name, num, env = parent.frame())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,6 +35,11 @@ evalobject(name, num, env = parent.frame(), ...)
 \details{
   These functions depend on the \pkg{CodeDepends} package for computing
   the dependencies. If it is not installed, an error will be thrown.
+
+  The \code{loadobject} function loads the cached value of the
+  expression in which the object is found. It is possible that the
+  cached value of the expression will contain more objects than just the
+  named object, in which case all objects will be loaded.
 }
 \value{
   \code{objectcode} returns a vector of indices indicating the

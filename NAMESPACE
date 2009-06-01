@@ -3,6 +3,7 @@ export(
        "graphcode",
        "objectcode",
        "evalobject",
+       "loadobject",
        "runcode",
        "skipcode",
        "loadcache",
