@@ -225,13 +225,18 @@ skipcode <- function(num, append = TRUE) {
 ################################################################################
 ## Use CodeDepends stuff
 
-graphcode <- function(num, ...) {
+readDoc <- function() {
         if(!require(CodeDepends))
                 stop("need 'CodeDepends' package to graph code")
-        if(!require(Rgraphviz))
-                stop("need 'Rgraphviz' package to graph code")
         srcfile <- checkSourceFile()
         doc <- readScript(srcfile, type = "R")
+        doc
+}
+
+graphcode <- function(num, ...) {
+        if(!require(Rgraphviz))
+                stop("need 'Rgraphviz' package to graph code")
+        doc <- readDoc()
 
         if(missing(num))
                 num <- seq_along(doc)
@@ -239,12 +244,8 @@ graphcode <- function(num, ...) {
         plot(gr, ...)
 }
 
-
 objectcode <- function(name, num, show = TRUE) {
-        if(!require(CodeDepends))
-                stop("need 'CodeDepends' package to graph code")
-        srcfile <- checkSourceFile()
-        doc <- readScript(srcfile, type = "R")
+        doc <- readDoc()
 
         if(missing(num))
                 num <- seq_along(doc)
@@ -259,4 +260,9 @@ objectcode <- function(name, num, show = TRUE) {
         if(show)
                 code(idx, full = TRUE)
         invisible(idx)
+}
+
+evalobject <- function(name, num, env = parent.frame(), ...) {
+        idx <- objectcode(name, num, show = FALSE)
+        runcode(idx, env, ...)
 }

@@ -1,17 +1,20 @@
 \name{objectcode}
 \Rdversion{1.1}
 \alias{objectcode}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{evalobject}
+
 \title{
   Show dependent R expressions for an object
 }
 \description{
   Given the name of an R object or set of R objects, show the
   R expressions on which those objects depend and return the indices for
-  those R expressions in the document.
+  those R expressions in the document. Alternatively, evaluate the
+  sequence of R expressions that give rise to an R object.
 }
 \usage{
 objectcode(name, num, show = TRUE)
+evalobject(name, num, env = parent.frame(), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,14 +27,16 @@ objectcode(name, num, show = TRUE)
   \item{show}{
     Should the expressions be printed to the screen?
   }
+  \item{env}{environment in which evaluation should occur}
 }
 \details{
-  This function depends on the \pkg{CodeDepends} package for computing
+  These functions depend on the \pkg{CodeDepends} package for computing
   the dependencies. If it is not installed, an error will be thrown.
 }
 \value{
-  A vector of indices indicating the expression sequence numbers for the
-  R expressions.
+  \code{objectcode} returns a vector of indices indicating the
+  expression sequence numbers for the R expressions. \code{evalobject}
+  returns nothing but evaluates R expressions in the specified environment.
 }
 \author{
   Roger D. Peng \email{rpeng@jhsph.edu}
