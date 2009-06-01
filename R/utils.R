@@ -24,7 +24,7 @@ package <- function(cachedir) {
         message("zipping cache directory...")
         cmd <- paste("zip -r -X", name, basename(cachedir))
         out <- system(cmd, intern = TRUE)
-        
+
         pkgdigest <- packageDigest(cachedir)
         newname <- paste("./cpkg-", pkgdigest, ".zip", sep = "")
         message(gettextf("creating package '%s'", basename(newname)))
