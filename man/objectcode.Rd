@@ -28,6 +28,7 @@ evalobject(name, num, env = parent.frame(), ...)
     Should the expressions be printed to the screen?
   }
   \item{env}{environment in which evaluation should occur}
+  \item{...}{other arguments passed to \code{runcode}}
 }
 \details{
   These functions depend on the \pkg{CodeDepends} package for computing
