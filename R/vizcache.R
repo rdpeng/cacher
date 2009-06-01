@@ -105,6 +105,7 @@ code <- function(num = NULL, full = FALSE) {
                 })
         }
         showExpressions(num, expr.print, full)
+        invisible(exprList[num])
 }
 
 metafile <- function(srcfile) {
@@ -244,6 +245,8 @@ graphcode <- function(num, ...) {
         plot(gr, ...)
 }
 
+## Show code that leads to an object
+
 objectcode <- function(name, num, show = TRUE) {
         doc <- readDoc()
 
@@ -261,6 +264,8 @@ objectcode <- function(name, num, show = TRUE) {
                 code(idx, full = TRUE)
         invisible(idx)
 }
+
+## Evaluate code leading to an object
 
 evalobject <- function(name, num, env = parent.frame(), ...) {
         idx <- objectcode(name, num, show = FALSE)

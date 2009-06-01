@@ -28,6 +28,6 @@ showcode()
   be useful if one is interested in seeing any comments.
 }
 \value{
-  Nothing useful is returned.
+  An R expression object containing the expressions shown.
 }
 \keyword{utilities}
