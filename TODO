@@ -9,3 +9,5 @@
 * Annotation: tagging, forcing evaluation, figures/tables
 
 * Error correction for cache database?
+
+* Allow references to other cache packages
