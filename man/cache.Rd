@@ -1,18 +1,23 @@
 \name{cache}
 \alias{cache}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{Return cache directory}
+\alias{setcache}
+
+\title{Set/Return cache directory}
 \description{
-  Return the path to the current cache directory
+  Set/Return the path to the current cache directory
 }
 \usage{
 cache()
+setcache(dir)
+}
+\arguments{
+  \item{dir}{directory name}
 }
 \value{
   A string indicating the path to the current cache directory.
 }
 \examples{
-setConfig("cachedir", "mycachedir")
+setcache("mycachedir")
 cache()
 }
 \keyword{utilities}

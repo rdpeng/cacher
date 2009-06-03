@@ -5,6 +5,11 @@ cache <- function() {
         getConfig("cachedir")
 }
 
+setcache <- function(dir) {
+        setConfig("cachedir", dir)
+        invisible(dir)
+}
+
 deletecache <- function(cachedir = NULL) {
         if(is.null(cachedir))
                 cachedir <- cache()
