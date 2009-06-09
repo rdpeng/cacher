@@ -17,6 +17,7 @@ export(
        "setcache",
        "showobjects",
        "package",
+       "cachepackage",
        "clonecache",
        "checkcode",
        "checkobjects",

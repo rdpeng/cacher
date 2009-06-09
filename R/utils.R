@@ -7,8 +7,12 @@ DIGESTLEN <- 40
 CHECKSUM_BEGIN <- 6
 CHECKSUM_END <- CHECKSUM_BEGIN + DIGESTLEN - 1
 
-
 package <- function(cachedir) {
+        warning("'package' is deprecated.\nUse 'cachepackage' instead.\n")
+        cachepackage(cachedir)
+}
+
+cachepackage <- function(cachedir) {
         if(missing(cachedir))
                 cachedir <- getConfig("cachedir")
         if(cachedir == ".")

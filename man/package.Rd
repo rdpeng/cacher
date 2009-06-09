@@ -1,5 +1,7 @@
 \name{package}
 \alias{package}
+\alias{cachepackage}
+
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Create a cache package}
 \description{
@@ -7,6 +9,7 @@
 }
 \usage{
 package(cachedir)
+cachepackage(cachedir)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,10 +21,13 @@ package(cachedir)
   operate.  The cache directory is zipped up and an archive is created.
   This file can be distributed to others or uploaded to an archive
   website.
-}
-\note{
+  
   If an archive file of the same already exists, it will be overwritten,
   with a warning issued.
+}
+\note{
+  The \code{package} function is deprecated in favor of the renamed
+  \code{cachepackage} function.
 }
 \value{
   The name of the archive file created.
