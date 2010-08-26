@@ -17,7 +17,8 @@ cachepackage <- function(cachedir) {
                 cachedir <- getConfig("cachedir")
         if(cachedir == ".")
                 stop("'cachedir' cannot be '.' when creating a package")
-        if(!nzchar(Sys.which("zip")))
+        checkzip <- Sys.which("zip") 
+        if(!nzchar(checkzip) || !file.exists(checkzip))
                 stop("'zip' utility not found in path")
         name <- paste(tempfile(), "zip", sep = ".")
 
