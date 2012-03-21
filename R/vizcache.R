@@ -98,7 +98,7 @@ code <- function(num = NULL, full = FALSE) {
                 num <- seq_len(length(exprList))
         if(!full) {
                 expr.print <- sapply(exprList, function(x) {
-                        deparse(x, width = getConfig("exprDeparseWidth"))[1]
+                        deparse(x, width.cutoff = getConfig("exprDeparseWidth"))[1]
                 })
         }
         else {

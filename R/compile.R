@@ -218,7 +218,7 @@ updateSrcFileList <- function(srcfile) {
 
 abbreviateExpr <- function(expr) {
         exprWidth <- getConfig("exprDeparseWidth")
-        deparse(expr[[1]], width = exprWidth)[1]
+        deparse(expr[[1]], width.cutoff = exprWidth)[1]
 }
 
 writeMetadata <- function(expr, srcfile, exprFile) {
