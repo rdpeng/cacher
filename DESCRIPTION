@@ -1,7 +1,7 @@
 Package: cacher
 Title: Tools for caching and distributing statistical analyses
-Version: 1.1-2
-Date: 2012-03-21
+Version: 1.1-3
+Date: 2013-12-16
 Depends: R (>= 2.14.0)
 Imports: utils
 Suggests: digest, CodeDepends, Rgraphviz
