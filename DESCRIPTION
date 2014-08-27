@@ -5,8 +5,8 @@ Date: 2013-12-16
 Depends: R (>= 3.0.0)
 Imports: utils
 Suggests: digest, CodeDepends, Rgraphviz
-Author: Roger D. Peng <rpeng@jhsph.edu>
-Maintainer: Roger D. Peng <rpeng@jhsph.edu>
+Author: Roger D. Peng <rdpeng@jhu.edu>
+Maintainer: Roger D. Peng <rdpeng@jhu.edu>
 Description: This package provides tools for caching statistical analyses in key-value databases which can subsequently be distributed over the web.  
 License: GPL (>= 2)
 URL: http://github.com/rdpeng/cacher
